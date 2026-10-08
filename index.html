@@ -81,6 +81,19 @@
   .intro h1 { margin: 16px 0 0; font-size: clamp(36px, 11vw, 48px); line-height: .98; font-weight: 700; letter-spacing: .01em; text-transform: uppercase; text-shadow: 0 4px 0 rgba(140, 40, 0, .25); }
   .intro .lead { margin: 10px auto 22px; font-size: 17px; line-height: 1.4; font-weight: 500; max-width: 330px; opacity: .96; }
   .intro .meta { margin: 12px 0 0; font-size: 13.5px; font-weight: 500; opacity: .9; }
+  .lang-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: -6px 0 16px; }
+  .lang-label { font-size: 13px; font-weight: 600; letter-spacing: .04em; opacity: .9; }
+  .lang { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 5px; border-radius: 999px;
+          background: rgba(28, 10, 4, .22); border: 1px solid rgba(255,255,255,.3); }
+  .lang-btn {
+    min-height: 48px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; white-space: nowrap;
+    transition: background .2s ease, color .2s ease, transform .15s ease;
+  }
+  .lang-btn:active { transform: scale(.96); }
+  .lang-btn .code { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; padding: 3px 7px; border-radius: 7px; border: 1.5px solid currentColor; opacity: .9; }
+  .lang-btn[aria-checked="true"] { background: #fff; color: var(--orange-deep); box-shadow: 0 4px 12px rgba(110, 30, 0, .2); }
+  @media (max-width: 380px) { .lang-btn { font-size: 14px; gap: 6px; padding: 0 6px; } .lang-btn .long { display: none; } }
 
   /* Question */
   .q-top { display: flex; align-items: center; gap: 12px; margin: 6px 0 18px; }
@@ -162,7 +175,12 @@
     opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
-  @media (max-height: 700px) { .intro .lead { margin-bottom: 16px; } .hero { width: min(64vw, 270px); } }
+  @media (max-height: 760px) { .intro .lead { margin: 8px auto 14px; font-size: 16px; } .hero { width: min(60vw, 250px); } .intro h1 { margin-top: 12px; } }
+  @media (max-height: 680px) {
+    .hero { width: min(50vw, 200px); } .mood-chip { min-height: 32px; padding: 6px 14px; font-size: 14px; }
+    .intro h1 { font-size: 34px; margin-top: 10px; } .intro .lead { margin: 6px auto 12px; font-size: 15px; }
+    .lang-wrap { margin-bottom: 12px; gap: 6px; } .lang-btn { min-height: 44px; } .intro .meta { margin-top: 8px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }
@@ -179,18 +197,25 @@
 
   <!-- INTRO -->
   <section class="screen intro" id="sIntro">
-    <div class="hero"><canvas id="heroCanvas" aria-label="Monty dengan berbagai mood"></canvas></div>
-    <div class="mood-chip" id="moodChip" aria-live="polite">Monty Kepanasan?</div>
+    <div class="hero"><canvas id="heroCanvas" data-i18n-aria="heroAria" aria-label="Monty dengan berbagai mood"></canvas></div>
+    <div class="mood-chip" id="moodChip">Monty Kepanasan?</div>
     <h1>Which Monty<br>are you?</h1>
-    <p class="lead">7 pertanyaan receh. 1 Monty yang paling kamu banget.</p>
-    <button class="btn btn-white" id="startBtn" type="button">Mulai kuis</button>
-    <p class="meta">Cuma 1 menit · Hasilnya siap dipamerin di Story</p>
+    <p class="lead" data-i18n="lead">7 pertanyaan receh. 1 Monty yang paling kamu banget.</p>
+    <div class="lang-wrap">
+      <span class="lang-label" id="langLabel">Pilih bahasa · Choose language</span>
+      <div class="lang" role="radiogroup" aria-labelledby="langLabel">
+        <button type="button" role="radio" class="lang-btn" data-lang="id" aria-checked="true"><span class="code">ID</span><span><span class="long">Bahasa </span>Indonesia</span></button>
+        <button type="button" role="radio" class="lang-btn" data-lang="en" aria-checked="false"><span class="code">EN</span>English</button>
+      </div>
+    </div>
+    <button class="btn btn-white" id="startBtn" type="button" data-i18n="start">Mulai kuis</button>
+    <p class="meta" data-i18n="meta">Cuma 1 menit · Hasilnya siap dipamerin di Story</p>
   </section>
 
   <!-- QUESTION -->
   <section class="screen" id="sQuestion" hidden>
     <div class="q-top">
-      <button class="back" id="backBtn" type="button" aria-label="Pertanyaan sebelumnya">
+      <button class="back" id="backBtn" type="button" data-i18n-aria="back" aria-label="Pertanyaan sebelumnya">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
       <div class="progress" aria-hidden="true"><span id="bar"></span></div>
@@ -206,12 +231,12 @@
   <!-- THINKING -->
   <section class="screen thinking" id="sThinking" hidden>
     <img src="assets/moods/overthink.png" alt="" draggable="false">
-    <p><span>Monty lagi mikir</span><span class="dots"></span></p>
+    <p><span data-i18n="thinking">Monty lagi mikir</span><span class="dots"></span></p>
   </section>
 
   <!-- RESULT -->
   <section class="screen result" id="sResult" hidden>
-    <p class="r-kicker">Kamu adalah…</p>
+    <p class="r-kicker" data-i18n="kicker">Kamu adalah…</p>
     <div class="card-wrap"><img class="card-img" id="cardImg" alt=""></div>
     <p class="r-tip" id="rTip" hidden></p>
     <div class="actions">
@@ -220,8 +245,8 @@
         <span id="saveLabel">Simpan ke galeri</span>
       </button>
       <div class="row">
-        <button class="btn btn-ghost" id="againBtn" type="button">Ulangi</button>
-        <button class="btn btn-ghost" id="challengeBtn" type="button">Tantang teman</button>
+        <button class="btn btn-ghost" id="againBtn" type="button" data-i18n="again">Ulangi</button>
+        <button class="btn btn-ghost" id="challengeBtn" type="button" data-i18n="challenge">Tantang teman</button>
       </div>
     </div>
     <div class="about">
@@ -230,11 +255,11 @@
       <div class="menu" id="aboutMenu" hidden></div>
       <div class="ig">
         <span class="ig-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></span>
-        <div><strong>Pamerin hasilmu!</strong><span>Upload ke Story &amp; tag @montyandco.id</span></div>
+        <div><strong data-i18n="showOff">Pamerin hasilmu!</strong><span id="storyTag">Upload ke Story &amp; tag @montyandco.id</span></div>
       </div>
       <a class="btn btn-ink" id="igFollow" href="https://www.instagram.com/montyandco.id/" target="_blank" rel="noopener">Follow @montyandco.id</a>
     </div>
-    <a class="btn btn-ghost link-booth" id="boothLink" href="#" target="_blank" rel="noopener" hidden>📸 Foto bareng Monty</a>
+    <a class="btn btn-ghost link-booth" id="boothLink" href="#" target="_blank" rel="noopener" data-i18n="booth" hidden>📸 Foto bareng Monty</a>
   </section>
 </div>
 
@@ -254,102 +279,141 @@
     quizLabel: '',              // text on the card footer; empty = this website's address
   };
 
-  // Each Monty type. "menu" = drink recommendation ('' hides it), "why" = one-line reason.
+  // Each Monty type. Text comes in two languages (id / en). "menu" = drink ('' hides it).
   // "img" = the Monty expression for this type ('' = standard Monty with drawn mood props).
   const TYPES = {
     hot: {
-      name: 'Monty Kepanasan', en: 'TOO HOT MONTY',
-      tagline: 'Jakarta selalu 2 derajat lebih panas khusus buat kamu.',
-      text: 'Kamu gampang gerah, tapi justru itu yang bikin kamu selalu tahu mana yang paling seger. Energi kamu kayak matahari jam 12: terang, hangat… kadang kebanyakan.',
-      traits: ['Gampang gerah', 'Pecinta es', 'Hangat'],
-      menu: 'Monster Lemon Crush', why: 'Asem-seger, biar kamu adem lagi.',
+      name: { id: 'Monty Kepanasan', en: 'Too-Hot Monty' },
+      tagline: { id: 'Jakarta selalu 2 derajat lebih panas khusus buat kamu.', en: 'Jakarta is always 2 degrees hotter, just for you.' },
+      text: { id: 'Kamu gampang gerah, tapi justru itu yang bikin kamu selalu tahu mana yang paling seger. Energi kamu kayak matahari jam 12: terang, hangat… kadang kebanyakan.',
+              en: 'You overheat easily, which is exactly why you always know what\'s most refreshing. Your energy is like the midday sun: bright, warm… sometimes a bit too much.' },
+      traits: { id: ['Gampang gerah', 'Pecinta es', 'Hangat'], en: ['Always sweaty', 'Ice lover', 'Warm-hearted'] },
+      menu: 'Monster Lemon Crush', why: { id: 'Asem-seger, biar kamu adem lagi.', en: 'Zesty and fresh, to cool you right down.' },
       partner: 'excited', img: 'assets/moods/hot.png',
       bg: '#FFCF3F', ink: '#3A1C10', chip: 'rgba(255,255,255,.55)'
     },
     blush: {
-      name: 'Monty Baper', en: 'BLUSHING MONTY',
-      tagline: 'Dipuji dikit, pipi langsung pink.',
-      text: 'Hati kamu selembut busa milk tea. Gampang salting, gampang terharu, tapi itu yang bikin orang betah di dekat kamu.',
-      traits: ['Gampang salting', 'Romantis', 'Perhatian'],
-      menu: 'Monster Chocolate', why: 'Manis dan hangat, bikin makin baper.',
+      name: { id: 'Monty Baper', en: 'Blushing Monty' },
+      tagline: { id: 'Dipuji dikit, pipi langsung pink.', en: 'One tiny compliment and your cheeks turn pink.' },
+      text: { id: 'Hati kamu selembut busa milk tea. Gampang salting, gampang terharu, tapi itu yang bikin orang betah di dekat kamu.',
+              en: 'Your heart is as soft as milk foam. You get flustered and touched easily, and that\'s exactly why people love being around you.' },
+      traits: { id: ['Gampang salting', 'Romantis', 'Perhatian'], en: ['Easily flustered', 'Romantic', 'Caring'] },
+      menu: 'Monster Chocolate', why: { id: 'Manis dan hangat, bikin makin baper.', en: 'Sweet and cozy, for extra feels.' },
       partner: 'angry', img: 'assets/moods/blush.png',
       bg: '#FFB3CB', ink: '#4A1630', chip: 'rgba(255,255,255,.55)'
     },
     angry: {
-      name: 'Monty Gagal Galak', en: 'FAKE ANGRY MONTY',
-      tagline: 'Niatnya galak, hasilnya gemes.',
-      text: 'Kamu kelihatan tegas dan hobi ngomel, tapi semua orang tahu kamu yang paling soft. Persis Monty: mau nyeremin, malah pipinya merah.',
-      traits: ['Tsundere', 'Setia', 'Ngomel tanda sayang'],
-      menu: 'Monster Latte', why: 'Pahit di luar, lembut di dalam. Kayak kamu.',
+      name: { id: 'Monty Gagal Galak', en: 'Fake-Angry Monty' },
+      tagline: { id: 'Niatnya galak, hasilnya gemes.', en: 'Trying to look fierce, ending up adorable.' },
+      text: { id: 'Kamu kelihatan tegas dan hobi ngomel, tapi semua orang tahu kamu yang paling soft. Persis Monty: mau nyeremin, malah pipinya merah.',
+              en: 'You look tough and love to grumble, but everyone knows you\'re the softest one. Just like Monty: tries to be scary, ends up blushing.' },
+      traits: { id: ['Tsundere', 'Setia', 'Ngomel tanda sayang'], en: ['Tsundere', 'Loyal', 'Nags out of love'] },
+      menu: 'Monster Latte', why: { id: 'Pahit di luar, lembut di dalam. Kayak kamu.', en: 'Bold outside, smooth inside. Just like you.' },
       partner: 'blush', img: 'assets/moods/angry.png',
       bg: '#7A66F2', ink: '#FFFFFF', chip: 'rgba(255,255,255,.2)'
     },
     excited: {
-      name: 'Monty Semangat', en: 'EXCITED MONTY',
-      tagline: 'Baterai sosial kamu nggak ada habisnya.',
-      text: 'Kamu yang paling heboh di grup, paling cepat bilang "ayo!", dan paling sering bikin rencana dadakan yang ternyata seru banget.',
-      traits: ['Heboh', 'Spontan', 'Moodbooster'],
-      menu: 'Monster Isotonic Drink', why: 'Isi ulang energi buat acara berikutnya.',
+      name: { id: 'Monty Semangat', en: 'Excited Monty' },
+      tagline: { id: 'Baterai sosial kamu nggak ada habisnya.', en: 'Your social battery never runs out.' },
+      text: { id: 'Kamu yang paling heboh di grup, paling cepat bilang "ayo!", dan paling sering bikin rencana dadakan yang ternyata seru banget.',
+              en: 'You\'re the loudest one in the group chat, the first to say "let\'s go!", and the master of last-minute plans that turn out amazing.' },
+      traits: { id: ['Heboh', 'Spontan', 'Moodbooster'], en: ['Hype', 'Spontaneous', 'Mood booster'] },
+      menu: 'Monster Isotonic Drink', why: { id: 'Isi ulang energi buat acara berikutnya.', en: 'Recharge for the next adventure.' },
       partner: 'hot', img: 'assets/moods/excited.png',
       bg: '#3FD0C9', ink: '#0E3A3A', chip: 'rgba(255,255,255,.5)'
     },
     sleepy: {
-      name: 'Monty Mager', en: 'SLEEPY MONTY',
-      tagline: 'Mode hemat energi: selalu aktif.',
-      text: 'Kamu percaya semua masalah bisa selesai setelah tidur siang. Santai, kalem, anti drama, dan jago banget menikmati hidup pelan-pelan.',
-      traits: ['Kalem', 'Anti drama', 'Ahli rebahan'],
-      menu: 'Monster Americano', why: 'Biar melek… minimal sampai jam pulang.',
+      name: { id: 'Monty Mager', en: 'Sleepy Monty' },
+      tagline: { id: 'Mode hemat energi: selalu aktif.', en: 'Power-saving mode: always on.' },
+      text: { id: 'Kamu percaya semua masalah bisa selesai setelah tidur siang. Santai, kalem, anti drama, dan jago banget menikmati hidup pelan-pelan.',
+              en: 'You believe every problem can be solved after a nap. Chill, calm, drama-free, and a pro at enjoying life slowly.' },
+      traits: { id: ['Kalem', 'Anti drama', 'Ahli rebahan'], en: ['Chill', 'Drama-free', 'Nap expert'] },
+      menu: 'Monster Americano', why: { id: 'Biar melek… minimal sampai jam pulang.', en: 'To stay awake… at least until home time.' },
       partner: 'overthink', img: 'assets/moods/sleepy.png',
       bg: '#A9C4F5', ink: '#1E2A55', chip: 'rgba(255,255,255,.55)'
     },
     overthink: {
-      name: 'Monty Overthinking', en: 'OVERTHINKING MONTY',
-      tagline: 'Chat "oke" aja bisa kamu pikirin 3 hari.',
-      text: 'Otak kamu nggak pernah benar-benar libur. Kamu teliti, peka, dan selalu mikirin perasaan orang lain, kadang sampai lupa mikirin diri sendiri.',
-      traits: ['Peka', 'Teliti', 'Analis chat'],
-      menu: 'Monster Mixed Fruit', why: 'Banyak rasa, kayak isi kepalamu.',
+      name: { id: 'Monty Overthinking', en: 'Overthinking Monty' },
+      tagline: { id: 'Chat "oke" aja bisa kamu pikirin 3 hari.', en: 'You can overthink an "ok" text for 3 days.' },
+      text: { id: 'Otak kamu nggak pernah benar-benar libur. Kamu teliti, peka, dan selalu mikirin perasaan orang lain, kadang sampai lupa mikirin diri sendiri.',
+              en: 'Your brain never really takes a day off. You\'re thoughtful, sensitive and always thinking about how others feel, sometimes forgetting about yourself.' },
+      traits: { id: ['Peka', 'Teliti', 'Analis chat'], en: ['Sensitive', 'Detail-oriented', 'Chat analyst'] },
+      menu: 'Monster Mixed Fruit', why: { id: 'Banyak rasa, kayak isi kepalamu.', en: 'Lots of flavors, just like your thoughts.' },
       partner: 'sleepy', img: 'assets/moods/overthink.png',
       bg: '#9BE15D', ink: '#1F3A10', chip: 'rgba(255,255,255,.55)'
     }
   };
 
+  // Each answer points to a type: hot, blush, angry, excited, sleepy, overthink.
   const QUESTIONS = [
-    { q: 'Jam 2 siang, AC kantor tiba-tiba mati. Kamu…', a: [
-      ['Langsung meleleh. Ini hari terburuk.', 'hot'],
-      ['Ngomel, tapi tetap kipas-kipasin teman.', 'angry'],
-      ['Yaudah, tidur aja sekalian.', 'sleepy'],
-      ['Mikir: "Jangan-jangan sengaja dimatiin biar kita pulang?"', 'overthink']] },
-    { q: 'Crush kamu bales chat: "haha iya". Reaksi kamu…', a: [
-      ['Senyum-senyum sendiri, pipi panas.', 'blush'],
-      ['Screenshot, kirim ke grup, heboh bareng.', 'excited'],
-      ['Bales "oke" doang. Jual mahal.', 'angry'],
-      ['Analisis 3 jam: "haha iya" itu maksudnya apa?', 'overthink']] },
-    { q: 'Weekend ideal kamu…', a: [
-      ['Rebahan full, HP di dada.', 'sleepy'],
-      ['Kebanyakan mikir mau ngapain, tau-tau udah Minggu sore.', 'overthink'],
-      ['Ikut semua acara. FOMO is real.', 'excited'],
-      ['Ngadem di mall seharian.', 'hot']] },
-    { q: 'Teman telat 1 jam. Kamu…', a: [
-      ['Ngomel di chat… lalu bilang "gapapa kok" pas dia datang.', 'angry'],
-      ['Mikir jangan-jangan aku yang salah jam.', 'overthink'],
-      ['Nunggu di luar sambil keringetan.', 'hot'],
-      ['Malu-malu bilang "aku juga baru sampai kok".', 'blush']] },
-    { q: 'Kalau dipuji di depan banyak orang…', a: [
-      ['Merah kayak tomat.', 'blush'],
-      ['Teriak "MAKASIH!!" kenceng banget.', 'excited'],
-      ['Pura-pura cool, padahal seneng.', 'angry'],
-      ['Kepikiran terus: dia tulus nggak ya?', 'overthink']] },
-    { q: 'Pilih satu, cepat!', a: [
-      ['Es batu sekarung', 'hot'],
-      ['Kasur empuk', 'sleepy'],
-      ['Konser dadakan', 'excited'],
-      ['Surat cinta anonim', 'blush']] },
-    { q: 'Kalimat yang paling sering kamu bilang…', a: [
-      ['"Panas banget sih hari ini."', 'hot'],
-      ['"Bentar, 5 menit lagi…"', 'sleepy'],
-      ['"AYO GAS!"', 'excited'],
-      ['"Aku nggak marah ya. Cuma kesel."', 'angry']] }
+    { q: { id: 'Jam 2 siang, AC kantor tiba-tiba mati. Kamu…', en: 'It\'s 2 PM and the office AC suddenly dies. You…' }, a: [
+      { t: 'hot', id: 'Langsung meleleh. Ini hari terburuk.', en: 'Melt on the spot. Worst day ever.' },
+      { t: 'angry', id: 'Ngomel, tapi tetap kipas-kipasin teman.', en: 'Grumble, but still fan your coworkers.' },
+      { t: 'sleepy', id: 'Yaudah, tidur aja sekalian.', en: 'Oh well, might as well take a nap.' },
+      { t: 'overthink', id: 'Mikir: "Jangan-jangan sengaja dimatiin biar kita pulang?"', en: 'Wonder: "Did they turn it off on purpose so we\'d go home?"' }] },
+    { q: { id: 'Crush kamu bales chat: "haha iya". Reaksi kamu…', en: 'Your crush replies: "haha yeah". You…' }, a: [
+      { t: 'blush', id: 'Senyum-senyum sendiri, pipi panas.', en: 'Smile at your phone, cheeks on fire.' },
+      { t: 'excited', id: 'Screenshot, kirim ke grup, heboh bareng.', en: 'Screenshot it and freak out with the group chat.' },
+      { t: 'angry', id: 'Bales "oke" doang. Jual mahal.', en: 'Reply "ok". Playing hard to get.' },
+      { t: 'overthink', id: 'Analisis 3 jam: "haha iya" itu maksudnya apa?', en: 'Spend 3 hours decoding what "haha yeah" means.' }] },
+    { q: { id: 'Weekend ideal kamu…', en: 'Your ideal weekend…' }, a: [
+      { t: 'sleepy', id: 'Rebahan full, HP di dada.', en: 'In bed all day, phone on your chest.' },
+      { t: 'overthink', id: 'Kebanyakan mikir mau ngapain, tau-tau udah Minggu sore.', en: 'Overthinking what to do… suddenly it\'s Sunday evening.' },
+      { t: 'excited', id: 'Ikut semua acara. FOMO is real.', en: 'Every event, every plan. FOMO is real.' },
+      { t: 'hot', id: 'Ngadem di mall seharian.', en: 'Hiding from the heat in a mall all day.' }] },
+    { q: { id: 'Teman telat 1 jam. Kamu…', en: 'Your friend is 1 hour late. You…' }, a: [
+      { t: 'angry', id: 'Ngomel di chat… lalu bilang "gapapa kok" pas dia datang.', en: 'Rant in the chat… then say "it\'s fine" when they arrive.' },
+      { t: 'overthink', id: 'Mikir jangan-jangan aku yang salah jam.', en: 'Wonder if maybe you got the time wrong.' },
+      { t: 'hot', id: 'Nunggu di luar sambil keringetan.', en: 'Wait outside, sweating buckets.' },
+      { t: 'blush', id: 'Malu-malu bilang "aku juga baru sampai kok".', en: 'Shyly say "I just got here too".' }] },
+    { q: { id: 'Kalau dipuji di depan banyak orang…', en: 'When someone compliments you in front of everyone…' }, a: [
+      { t: 'blush', id: 'Merah kayak tomat.', en: 'Red as a tomato.' },
+      { t: 'excited', id: 'Teriak "MAKASIH!!" kenceng banget.', en: 'Yell "THANK YOU!!" at full volume.' },
+      { t: 'angry', id: 'Pura-pura cool, padahal seneng.', en: 'Act cool, secretly thrilled.' },
+      { t: 'overthink', id: 'Kepikiran terus: dia tulus nggak ya?', en: 'Keep wondering: did they really mean it?' }] },
+    { q: { id: 'Pilih satu, cepat!', en: 'Pick one, quick!' }, a: [
+      { t: 'hot', id: 'Es batu sekarung', en: 'A sack of ice' },
+      { t: 'sleepy', id: 'Kasur empuk', en: 'A fluffy bed' },
+      { t: 'excited', id: 'Konser dadakan', en: 'A surprise concert' },
+      { t: 'blush', id: 'Surat cinta anonim', en: 'An anonymous love letter' }] },
+    { q: { id: 'Kalimat yang paling sering kamu bilang…', en: 'The thing you say most…' }, a: [
+      { t: 'hot', id: '"Panas banget sih hari ini."', en: '"It\'s sooo hot today."' },
+      { t: 'sleepy', id: '"Bentar, 5 menit lagi…"', en: '"Wait, 5 more minutes…"' },
+      { t: 'excited', id: '"AYO GAS!"', en: '"LET\'S GOOO!"' },
+      { t: 'angry', id: '"Aku nggak marah ya. Cuma kesel."', en: '"I\'m not mad. Just annoyed."' }] }
   ];
+
+  // Interface text
+  const UI = {
+    id: {
+      heroAria: 'Monty dengan berbagai mood', igAria: 'MONTY&Co. di Instagram',
+      lead: '7 pertanyaan receh. 1 Monty yang paling kamu banget.',
+      langLabel: 'Pilih bahasa', start: 'Mulai kuis', meta: 'Cuma 1 menit · Hasilnya siap dipamerin di Story',
+      back: 'Pertanyaan sebelumnya', thinking: 'Monty lagi mikir',
+      kicker: 'Kamu adalah…', save: 'Simpan ke galeri', saved: 'Tersimpan ✓', again: 'Ulangi', challenge: 'Tantang teman',
+      recommend: 'Rekomendasi Monty buat kamu: ', showOff: 'Pamerin hasilmu!', storyTag: 'Upload ke Story & tag',
+      booth: '📸 Foto bareng Monty',
+      tipShare: 'Di iPhone: tap Simpan, lalu pilih "Save Image".', tipHold: 'Tips: tekan lama gambarnya, lalu "Save to Photos".',
+      savedToast: (h) => `Tersimpan! Upload ke Story & tag ${h} ✨`, copied: 'Link disalin! Kirim ke temanmu 💌',
+      shareText: (n, tg) => `Aku ${n}! ${tg} Kamu Monty yang mana?`, shareGeneric: 'Kamu Monty yang mana?',
+      cardKicker: 'Kamu adalah…', cardDrink: 'Cocok minum: ', cardPartner: 'Partner terbaikmu: ', cardFooter: 'Kamu Monty yang mana? ',
+      resultAlt: (n, tg) => `Hasil kuis: ${n}. ${tg}`
+    },
+    en: {
+      heroAria: 'Monty in different moods', igAria: 'MONTY&Co. on Instagram',
+      lead: '7 silly questions. 1 Monty that\'s totally you.',
+      langLabel: 'Choose language', start: 'Start quiz', meta: 'Just 1 minute · Results ready for your Story',
+      back: 'Previous question', thinking: 'Monty is thinking',
+      kicker: 'You are…', save: 'Save to Photos', saved: 'Saved ✓', again: 'Play again', challenge: 'Challenge a friend',
+      recommend: 'Monty recommends: ', showOff: 'Show it off!', storyTag: 'Post to your Story & tag',
+      booth: '📸 Take a photo with Monty',
+      tipShare: 'On iPhone: tap Save, then choose "Save Image".', tipHold: 'Tip: press & hold the image, then "Save to Photos".',
+      savedToast: (h) => `Saved! Post it to your Story & tag ${h} ✨`, copied: 'Link copied! Send it to a friend 💌',
+      shareText: (n, tg) => `I'm ${n}! ${tg} Which Monty are you?`, shareGeneric: 'Which Monty are you?',
+      cardKicker: 'You are…', cardDrink: 'Perfect drink: ', cardPartner: 'Best partner: ', cardFooter: 'Which Monty are you? ',
+      resultAlt: (n, tg) => `Quiz result: ${n}. ${tg}`
+    }
+  };
   /* =================================================== */
 
   const $ = (id) => document.getElementById(id);
@@ -362,6 +426,33 @@
   $('igTop').href = CONFIG.instagramUrl;
   $('igFollow').href = CONFIG.instagramUrl;
   $('igFollow').textContent = 'Follow ' + CONFIG.instagramHandle;
+
+  /* ---------- Language ---------- */
+  let lang = 'id';
+  try { const saved = localStorage.getItem('montyQuizLang'); if (saved === 'id' || saved === 'en') lang = saved; } catch (_) {}
+  const L = () => UI[lang];
+  const pickLang = (v) => (v && typeof v === 'object' && !Array.isArray(v) && ('id' in v || 'en' in v)) ? v[lang] : v;
+  // A type with its text in the current language. "alt" = the name in the other language (shown as a badge).
+  function tt(key) {
+    const src = TYPES[key], out = {};
+    for (const k in src) out[k] = pickLang(src[k]);
+    out.alt = (src.name[lang === 'id' ? 'en' : 'id'] || '').toUpperCase();
+    return out;
+  }
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = L()[el.dataset.i18n]; });
+    document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', L()[el.dataset.i18nAria]); });
+    $('igTop').setAttribute('aria-label', L().igAria);
+    $('storyTag').textContent = `${L().storyTag} ${CONFIG.instagramHandle}`;
+    document.querySelectorAll('.lang-btn').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
+    heroIdx = -1;                                   // refresh the mood chip name
+  }
+  document.querySelectorAll('.lang-btn').forEach((b) => b.addEventListener('click', () => {
+    lang = b.dataset.lang;
+    try { localStorage.setItem('montyQuizLang', lang); } catch (_) {}
+    applyLang();
+  }));
   if (CONFIG.photoBoothUrl) { $('boothLink').href = CONFIG.photoBoothUrl; $('boothLink').hidden = false; }
 
   const fontsReady = (document.fonts && document.fonts.load)
@@ -603,7 +694,7 @@
     heroRaf = requestAnimationFrame(heroFrame);
     if (!heroStart) heroStart = now;
     const el = (now - heroStart) / 1000, idx = Math.floor(el / 1.7) % ORDER.length, type = ORDER[idx];
-    if (idx !== heroIdx) { heroIdx = idx; moodChip.textContent = TYPES[type].name + '?'; }
+    if (idx !== heroIdx) { heroIdx = idx; moodChip.textContent = tt(type).name + '?'; }
     const W = hero.width, H = hero.height;
     hctx.clearRect(0, 0, W, H);
     hctx.beginPath(); hctx.arc(W / 2, H / 2, W * 0.46, 0, Math.PI * 2); hctx.fillStyle = TYPES[type].bg; hctx.fill();
@@ -622,12 +713,13 @@
 
   function renderQuestion() {
     const Q = QUESTIONS[step];
-    qText.textContent = Q.q;
+    qText.textContent = Q.q[lang];
     count.textContent = `${step + 1}/${QUESTIONS.length}`;
     bar.style.width = `${(step / QUESTIONS.length) * 100}%`;
     backBtn.disabled = step === 0;
     optionsEl.innerHTML = '';
-    Q.a.forEach(([label, type], i) => {
+    Q.a.forEach((ans, i) => {
+      const label = ans[lang], type = ans.t;
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'opt';
       b.innerHTML = `<span class="key">${KEYS[i]}</span><span></span>`;
@@ -666,7 +758,7 @@
   /* ---------- Result card (1080×1920, Instagram Story) ---------- */
   async function renderCard(type) {
     await Promise.all([imgReady(montyImg), fontsReady, customImgs[type] ? imgReady(customImgs[type]) : null]);
-    const T = TYPES[type], W = 1080, H = 1920;
+    const T = tt(type), W = 1080, H = 1920;
     const c = document.createElement('canvas'); c.width = W; c.height = H;
     const ctx = c.getContext('2d');
     const F = (w, px) => `${w} ${px}px Fredoka, ui-rounded, system-ui, sans-serif`;
@@ -676,12 +768,13 @@
     for (let y = 40, r = 0; y < H; y += 92, r++) for (let x = (r % 2) * 46 + 40; x < W; x += 92) { ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.fill(); }
 
     ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = T.ink;
-    ctx.globalAlpha = 0.85; ctx.font = F(600, 42); ctx.fillText('Kamu adalah…', W / 2, 150); ctx.globalAlpha = 1;
+    ctx.globalAlpha = 0.85; ctx.font = F(600, 42); ctx.fillText(L().cardKicker, W / 2, 150); ctx.globalAlpha = 1;
     fitFont(ctx, T.name, 700, 118, 960); ctx.fillText(T.name, W / 2, 280);
     ctx.font = F(600, 32);
-    const ew = ctx.measureText(T.en).width + 56;
+    fitFont(ctx, T.alt, 600, 32, 900);
+    const ew = ctx.measureText(T.alt).width + 56;
     roundRect(ctx, (W - ew) / 2, 312, ew, 58, 29); ctx.fillStyle = T.chip; ctx.fill();
-    ctx.fillStyle = T.ink; ctx.fillText(T.en, W / 2, 352);
+    ctx.fillStyle = T.ink; ctx.fillText(T.alt, W / 2, 352);
 
     // Layout pass: share the free space so every card fills the Story nicely.
     ctx.font = F(700, 50);
@@ -718,7 +811,7 @@
     y += 70 + 40 + extra;
 
     if (T.menu) {
-      const l1 = 'Cocok minum: ';
+      const l1 = L().cardDrink;
       let s1 = 34, s2 = 40, l1w, mwid, pw;
       do {
         ctx.font = F(500, s1); l1w = ctx.measureText(l1).width;
@@ -734,9 +827,9 @@
       y += 92 + 36 + extra;
     }
 
-    const P = TYPES[T.partner];
+    const P = tt(T.partner);
     ctx.font = F(500, 34); ctx.fillStyle = T.ink; ctx.globalAlpha = 0.9;
-    ctx.fillText(`Partner terbaikmu: ${P.name}`, W / 2, Math.min(y + 30, 1705)); ctx.globalAlpha = 1;
+    ctx.fillText(L().cardPartner + P.name, W / 2, Math.min(y + 30, 1705)); ctx.globalAlpha = 1;
 
     // footer
     ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(0, 1760, W, 160);
@@ -745,7 +838,7 @@
     ctx.fillStyle = T.ink === '#FFFFFF' ? '#FFD98A' : '#E2451B'; ctx.fillText('&Co.', 70 + mwd + 3, 1838);
     ctx.textAlign = 'right'; ctx.fillStyle = T.ink; ctx.font = F(600, 32); ctx.fillText(CONFIG.instagramHandle, W - 70, 1826);
     ctx.globalAlpha = 0.85; ctx.font = F(500, 26);
-    ctx.fillText('Kamu Monty yang mana? ' + (CONFIG.quizLabel || location.host || ''), W - 70, 1872); ctx.globalAlpha = 1;
+    ctx.fillText(L().cardFooter + (CONFIG.quizLabel || location.host || ''), W - 70, 1872); ctx.globalAlpha = 1;
     return c;
   }
 
@@ -760,23 +853,24 @@
     state = { type, url: URL.createObjectURL(blob), file: null, canShare: false };
     state.file = new File([blob], `which-monty-${type}.jpg`, { type: 'image/jpeg', lastModified: Date.now() });
     try { state.canShare = !!(navigator.canShare && navigator.canShare({ files: [state.file] })); } catch (_) {}
-    const T = TYPES[type];
+    const T = tt(type);
     $('cardImg').src = state.url;
-    $('cardImg').alt = `Hasil kuis: ${T.name}. ${T.tagline}`;
+    $('cardImg').alt = L().resultAlt(T.name, T.tagline);
     $('aboutTitle').textContent = T.name;
     $('aboutText').textContent = T.text;
     const menu = $('aboutMenu');
     menu.hidden = !T.menu;
     if (T.menu) {
-      menu.innerHTML = 'Rekomendasi Monty buat kamu: <b></b><span class="why"></span>';
+      menu.innerHTML = '<span class="pre"></span><b></b><span class="why"></span>';
+      menu.querySelector('.pre').textContent = L().recommend;
       menu.querySelector('b').textContent = T.menu;
       menu.querySelector('.why').textContent = T.why || '';
     }
     $('saveBtn').classList.remove('saved');
-    $('saveLabel').textContent = 'Simpan ke galeri';
+    $('saveLabel').textContent = L().save;
     const tip = $('rTip');
     tip.hidden = !isIOS;
-    tip.textContent = state.canShare ? 'Di iPhone: tap Simpan, lalu pilih "Save Image".' : 'Tips: tekan lama gambarnya, lalu "Save to Photos".';
+    tip.textContent = state.canShare ? L().tipShare : L().tipHold;
     show('result');
   }
 
@@ -786,8 +880,8 @@
     document.body.appendChild(a); a.click(); a.remove();
   }
   function markSaved(msg) {
-    $('saveBtn').classList.add('saved'); $('saveLabel').textContent = 'Tersimpan ✓';
-    toast(msg || `Tersimpan! Upload ke Story & tag ${CONFIG.instagramHandle} ✨`);
+    $('saveBtn').classList.add('saved'); $('saveLabel').textContent = L().saved;
+    toast(msg || L().savedToast(CONFIG.instagramHandle));
   }
 
   $('saveBtn').addEventListener('click', async () => {
@@ -801,9 +895,9 @@
   });
 
   $('challengeBtn').addEventListener('click', async () => {
-    const T = state.type ? TYPES[state.type] : null;
+    const T = state.type ? tt(state.type) : null;
     const url = location.href.split('#')[0].split('?')[0];
-    const text = T ? `Aku ${T.name}! ${T.tagline} Kamu Monty yang mana?` : 'Kamu Monty yang mana?';
+    const text = T ? L().shareText(T.name, T.tagline) : L().shareGeneric;
     try {
       if (navigator.share) {
         const data = { title: 'Which Monty Are You?', text, url };
@@ -812,11 +906,11 @@
         return;
       }
     } catch (e) { if (e && e.name === 'AbortError') return; }
-    try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Link disalin! Kirim ke temanmu 💌'); }
+    try { await navigator.clipboard.writeText(`${text} ${url}`); toast(L().copied); }
     catch (_) { toast(url); }
   });
 
-  $('againBtn').addEventListener('click', () => { step = 0; answers = []; show('question'); renderQuestion(); });
+  $('againBtn').addEventListener('click', () => { step = 0; answers = []; show('intro'); });
 
   let toastTimer = null;
   function toast(msg) {
@@ -824,6 +918,7 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
   }
 
+  applyLang();
   show('intro');
 })();
 </script>
