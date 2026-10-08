@@ -10,18 +10,21 @@ monty-quiz/
 ├── index.html        ← the whole quiz
 ├── README.md
 └── assets/
-    └── monty.png     ← Monty (transparent PNG)
+    ├── monty.png     ← Monty (transparent PNG), used on the "question" screen
+    └── moods/        ← one Monty expression per quiz type
+        ├── hot.png  blush.png  angry.png
+        └── excited.png  sleepy.png  overthink.png
 ```
 
 ## Things to edit (top of the script in index.html)
 
-- `CONFIG.photoBoothUrl` → link to the Photo with Monty site to show a "Foto bareng Monty" button.
+- `CONFIG.photoBoothUrl` → Photo with Monty link (set to https://montyphotobooth.vercel.app/).
 - `CONFIG.quizLabel` → text in the card footer (empty = this website's address).
-- `TYPES.<type>.menu` → drink recommendation per type ('' hides it). Only "Monty Kepanasan" has one now (Lemon Crush).
-- `TYPES.<type>.img` → optional: a dedicated Monty expression PNG for that type (e.g. 'assets/monty-sleepy.png').
-  When set, that PNG is used instead of the standard Monty + drawn mood props.
+- `TYPES.<type>.menu` / `why` → drink recommendation + one-line reason per type ('' hides it).
+- `TYPES.<type>.img` → the expression PNG for that type. To swap one, replace the file in `assets/moods/`
+  with the same name (transparent PNG, ~400 px is enough).
 - `QUESTIONS` → questions and answers; each answer points to a type
-  (hot, blush, angry, excited, sleepy, hungry).
+  (hot, blush, angry, excited, sleepy, overthink).
 
 ## Deploy: GitHub → Vercel
 

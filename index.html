@@ -145,6 +145,7 @@
   .about p { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--ink-soft); font-weight: 500; -webkit-user-select: text; user-select: text; }
   .about .menu { margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: #FFE9D3; font-size: 15px; font-weight: 600; color: var(--ink); }
   .about .menu b { color: var(--orange-deep); }
+  .about .menu .why { display: block; margin-top: 3px; font-weight: 500; color: var(--ink-soft); }
   .ig { display: flex; align-items: center; gap: 12px; margin: 16px 0 12px; }
   .ig-badge {
     flex: 0 0 auto; width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; color: #fff;
@@ -204,7 +205,7 @@
 
   <!-- THINKING -->
   <section class="screen thinking" id="sThinking" hidden>
-    <img src="assets/monty.png" alt="" draggable="false">
+    <img src="assets/moods/overthink.png" alt="" draggable="false">
     <p><span>Monty lagi mikir</span><span class="dots"></span></p>
   </section>
 
@@ -249,18 +250,20 @@
     montySrc: 'assets/monty.png',
     instagramHandle: '@montyandco.id',
     instagramUrl: 'https://www.instagram.com/montyandco.id/',
-    photoBoothUrl: '',          // e.g. 'https://your-photobooth.vercel.app' → shows a "Foto bareng Monty" button
+    photoBoothUrl: 'https://montyphotobooth.vercel.app/',   // shows a "Foto bareng Monty" button ('' hides it)
     quizLabel: '',              // text on the card footer; empty = this website's address
   };
 
-  // Each Monty type. "menu" = drink recommendation (leave '' to hide). "img" = optional custom PNG for this mood.
+  // Each Monty type. "menu" = drink recommendation ('' hides it), "why" = one-line reason.
+  // "img" = the Monty expression for this type ('' = standard Monty with drawn mood props).
   const TYPES = {
     hot: {
       name: 'Monty Kepanasan', en: 'TOO HOT MONTY',
       tagline: 'Jakarta selalu 2 derajat lebih panas khusus buat kamu.',
       text: 'Kamu gampang gerah, tapi justru itu yang bikin kamu selalu tahu mana yang paling seger. Energi kamu kayak matahari jam 12: terang, hangat… kadang kebanyakan.',
       traits: ['Gampang gerah', 'Pecinta es', 'Hangat'],
-      menu: 'Lemon Crush', partner: 'excited', img: '',
+      menu: 'Monster Lemon Crush', why: 'Asem-seger, biar kamu adem lagi.',
+      partner: 'excited', img: 'assets/moods/hot.png',
       bg: '#FFCF3F', ink: '#3A1C10', chip: 'rgba(255,255,255,.55)'
     },
     blush: {
@@ -268,7 +271,8 @@
       tagline: 'Dipuji dikit, pipi langsung pink.',
       text: 'Hati kamu selembut busa milk tea. Gampang salting, gampang terharu, tapi itu yang bikin orang betah di dekat kamu.',
       traits: ['Gampang salting', 'Romantis', 'Perhatian'],
-      menu: '', partner: 'angry', img: '',
+      menu: 'Monster Chocolate', why: 'Manis dan hangat, bikin makin baper.',
+      partner: 'angry', img: 'assets/moods/blush.png',
       bg: '#FFB3CB', ink: '#4A1630', chip: 'rgba(255,255,255,.55)'
     },
     angry: {
@@ -276,7 +280,8 @@
       tagline: 'Niatnya galak, hasilnya gemes.',
       text: 'Kamu kelihatan tegas dan hobi ngomel, tapi semua orang tahu kamu yang paling soft. Persis Monty: mau nyeremin, malah pipinya merah.',
       traits: ['Tsundere', 'Setia', 'Ngomel tanda sayang'],
-      menu: '', partner: 'blush', img: '',
+      menu: 'Monster Latte', why: 'Pahit di luar, lembut di dalam. Kayak kamu.',
+      partner: 'blush', img: 'assets/moods/angry.png',
       bg: '#7A66F2', ink: '#FFFFFF', chip: 'rgba(255,255,255,.2)'
     },
     excited: {
@@ -284,7 +289,8 @@
       tagline: 'Baterai sosial kamu nggak ada habisnya.',
       text: 'Kamu yang paling heboh di grup, paling cepat bilang "ayo!", dan paling sering bikin rencana dadakan yang ternyata seru banget.',
       traits: ['Heboh', 'Spontan', 'Moodbooster'],
-      menu: '', partner: 'hot', img: '',
+      menu: 'Monster Isotonic Drink', why: 'Isi ulang energi buat acara berikutnya.',
+      partner: 'hot', img: 'assets/moods/excited.png',
       bg: '#3FD0C9', ink: '#0E3A3A', chip: 'rgba(255,255,255,.5)'
     },
     sleepy: {
@@ -292,15 +298,17 @@
       tagline: 'Mode hemat energi: selalu aktif.',
       text: 'Kamu percaya semua masalah bisa selesai setelah tidur siang. Santai, kalem, anti drama, dan jago banget menikmati hidup pelan-pelan.',
       traits: ['Kalem', 'Anti drama', 'Ahli rebahan'],
-      menu: '', partner: 'hungry', img: '',
-      bg: '#2B3A80', ink: '#FFFFFF', chip: 'rgba(255,255,255,.18)'
+      menu: 'Monster Americano', why: 'Biar melek… minimal sampai jam pulang.',
+      partner: 'overthink', img: 'assets/moods/sleepy.png',
+      bg: '#A9C4F5', ink: '#1E2A55', chip: 'rgba(255,255,255,.55)'
     },
-    hungry: {
-      name: 'Monty Laper', en: 'HUNGRY MONTY',
-      tagline: 'Baru makan, udah mikirin makan berikutnya.',
-      text: 'Buat kamu, semua acara itu acara makan. Kamu tahu tempat jajan terenak dan selalu jadi orang yang ditanya "makan di mana?"',
-      traits: ['Foodie', 'Royal', 'Pemandu kuliner'],
-      menu: '', partner: 'sleepy', img: '',
+    overthink: {
+      name: 'Monty Overthinking', en: 'OVERTHINKING MONTY',
+      tagline: 'Chat "oke" aja bisa kamu pikirin 3 hari.',
+      text: 'Otak kamu nggak pernah benar-benar libur. Kamu teliti, peka, dan selalu mikirin perasaan orang lain, kadang sampai lupa mikirin diri sendiri.',
+      traits: ['Peka', 'Teliti', 'Analis chat'],
+      menu: 'Monster Mixed Fruit', why: 'Banyak rasa, kayak isi kepalamu.',
+      partner: 'sleepy', img: 'assets/moods/overthink.png',
       bg: '#9BE15D', ink: '#1F3A10', chip: 'rgba(255,255,255,.55)'
     }
   };
@@ -310,27 +318,27 @@
       ['Langsung meleleh. Ini hari terburuk.', 'hot'],
       ['Ngomel, tapi tetap kipas-kipasin teman.', 'angry'],
       ['Yaudah, tidur aja sekalian.', 'sleepy'],
-      ['Kesempatan! Turun jajan es.', 'hungry']] },
+      ['Mikir: "Jangan-jangan sengaja dimatiin biar kita pulang?"', 'overthink']] },
     { q: 'Crush kamu bales chat: "haha iya". Reaksi kamu…', a: [
       ['Senyum-senyum sendiri, pipi panas.', 'blush'],
-      ['Screenshot, kirim ke grup, bahas 2 jam.', 'excited'],
+      ['Screenshot, kirim ke grup, heboh bareng.', 'excited'],
       ['Bales "oke" doang. Jual mahal.', 'angry'],
-      ['Ketiduran sebelum sempat bales.', 'sleepy']] },
+      ['Analisis 3 jam: "haha iya" itu maksudnya apa?', 'overthink']] },
     { q: 'Weekend ideal kamu…', a: [
       ['Rebahan full, HP di dada.', 'sleepy'],
-      ['Kulineran dari pagi sampai malam.', 'hungry'],
+      ['Kebanyakan mikir mau ngapain, tau-tau udah Minggu sore.', 'overthink'],
       ['Ikut semua acara. FOMO is real.', 'excited'],
       ['Ngadem di mall seharian.', 'hot']] },
     { q: 'Teman telat 1 jam. Kamu…', a: [
       ['Ngomel di chat… lalu bilang "gapapa kok" pas dia datang.', 'angry'],
-      ['Udah pesan makanan duluan, sorry.', 'hungry'],
+      ['Mikir jangan-jangan aku yang salah jam.', 'overthink'],
       ['Nunggu di luar sambil keringetan.', 'hot'],
       ['Malu-malu bilang "aku juga baru sampai kok".', 'blush']] },
     { q: 'Kalau dipuji di depan banyak orang…', a: [
       ['Merah kayak tomat.', 'blush'],
       ['Teriak "MAKASIH!!" kenceng banget.', 'excited'],
       ['Pura-pura cool, padahal seneng.', 'angry'],
-      ['Bilang makasih, terus "makan yuk?"', 'hungry']] },
+      ['Kepikiran terus: dia tulus nggak ya?', 'overthink']] },
     { q: 'Pilih satu, cepat!', a: [
       ['Es batu sekarung', 'hot'],
       ['Kasur empuk', 'sleepy'],
@@ -348,7 +356,7 @@
   const screens = { intro: $('sIntro'), question: $('sQuestion'), thinking: $('sThinking'), result: $('sResult') };
   const montyImg = $('montyImg');
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const ORDER = ['hot', 'blush', 'angry', 'excited', 'sleepy', 'hungry'];
+  const ORDER = ['hot', 'blush', 'angry', 'excited', 'sleepy', 'overthink'];
   const KEYS = ['A', 'B', 'C', 'D'];
 
   $('igTop').href = CONFIG.instagramUrl;
@@ -454,6 +462,19 @@
     if (line) lines.push(line);
     return lines;
   }
+  // Like wrapLines, but evens out two-line text so no word is left alone on the last line.
+  function wrapBalanced(ctx, text, maxW) {
+    const lines = wrapLines(ctx, text, maxW);
+    if (lines.length !== 2) return lines;
+    const words = text.split(' ');
+    let best = lines, bestW = Infinity;
+    for (let i = 1; i < words.length; i++) {
+      const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+      const wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
+      if (wa <= maxW && wb <= maxW && Math.max(wa, wb) < bestW) { bestW = Math.max(wa, wb); best = [a, b]; }
+    }
+    return best;
+  }
   function fitFont(ctx, text, weight, size, maxW) {
     let s = size;
     do { ctx.font = `${weight} ${s}px Fredoka, ui-rounded, system-ui, sans-serif`; s -= 2; } while (ctx.measureText(text).width > maxW && s > 20);
@@ -544,18 +565,31 @@
     ctx.restore();
   }
 
+  function imgFor(type) {
+    const c = customImgs[type];
+    return c && c.complete && c.naturalWidth ? c : null;
+  }
+  function fitBox(type, w, maxH) {                 // Monty's drawn size for a given width
+    const img = imgFor(type) || montyImg, ar = (img.naturalHeight / img.naturalWidth) || 0.948;
+    let h = w * ar; if (h > maxH) { h = maxH; w = h / ar; }
+    return { w, h };
+  }
+  // Draws Monty for a type inside box b (contained, standing on the box's bottom edge).
   function drawMontyWithMood(ctx, type, b, t) {
-    const custom = customImgs[type];
-    const img = custom && custom.complete && custom.naturalWidth ? custom : montyImg;
+    const custom = imgFor(type), img = custom || montyImg;
+    const ar = (img.naturalHeight / img.naturalWidth) || 0.948;
+    let w = b.w, h = w * ar; if (h > b.h) { h = b.h; w = h / ar; }
+    const x = b.x + (b.w - w) / 2, y = b.y + b.h - h;
     ctx.save();
-    ctx.beginPath(); ctx.ellipse(b.x + b.w / 2, b.y + b.h * 0.99, b.w * 0.3, b.h * 0.045, 0, 0, Math.PI * 2);
+    ctx.beginPath(); ctx.ellipse(x + w / 2, y + h * 0.985, w * 0.3, Math.max(8, b.w * 0.04), 0, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(30, 10, 0, .14)'; ctx.fill();
-    const tilt = type === 'sleepy' ? -0.08 : type === 'excited' ? 0.05 : 0;
-    const hop = type === 'excited' ? -Math.abs(Math.sin(t * 4)) * b.h * 0.03 : 0;
-    ctx.translate(b.x + b.w / 2, b.y + b.h / 2 + hop); ctx.rotate(tilt);
-    ctx.drawImage(img, -b.w / 2, -b.h / 2, b.w, b.h);
+    const tilt = custom ? 0 : type === 'sleepy' ? -0.08 : type === 'excited' ? 0.05 : 0;
+    const hop = type === 'excited' && t ? -Math.abs(Math.sin(t * 4)) * h * 0.03 : 0;
+    ctx.translate(x + w / 2, y + h / 2 + hop); ctx.rotate(tilt);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
     ctx.restore();
-    if (!custom) drawMood(ctx, type, b, t);
+    if (!custom) drawMood(ctx, type, { x, y, w, h }, t);
   }
 
   /* ---------- Intro hero (cycles through moods) ---------- */
@@ -575,8 +609,8 @@
     hctx.beginPath(); hctx.arc(W / 2, H / 2, W * 0.46, 0, Math.PI * 2); hctx.fillStyle = TYPES[type].bg; hctx.fill();
     hctx.lineWidth = W * 0.012; hctx.strokeStyle = '#FFFFFF'; hctx.stroke();
     const p = (el % 1.7) / 1.7, pop = p < 0.12 ? 0.9 + (p / 0.12) * 0.1 : 1;
-    const w = W * 0.56 * pop, h = w * (montyImg.naturalHeight / montyImg.naturalWidth || 0.948);
-    drawMontyWithMood(hctx, type, { x: (W - w) / 2, y: H * 0.54 - h / 2, w, h }, el);
+    const w = W * 0.62 * pop, h = W * 0.62 * pop;
+    drawMontyWithMood(hctx, type, { x: (W - w) / 2, y: H * 0.81 - h, w, h }, el);
   }
   function startHero() { if (heroRaf) return; sizeHero(); heroStart = 0; heroIdx = -1; Promise.all([imgReady(montyImg), fontsReady]).then(() => { if (!heroRaf) heroRaf = requestAnimationFrame(heroFrame); }); }
   function stopHero() { cancelAnimationFrame(heroRaf); heroRaf = 0; }
@@ -650,13 +684,18 @@
     ctx.fillStyle = T.ink; ctx.fillText(T.en, W / 2, 352);
 
     // Layout pass: share the free space so every card fills the Story nicely.
-    const mw = T.menu ? 640 : 690, mh = mw * (montyImg.naturalHeight / montyImg.naturalWidth || 0.948);
     ctx.font = F(700, 50);
-    const tl = wrapLines(ctx, T.tagline, 820);
+    const tl = wrapBalanced(ctx, T.tagline, 820);
     const bh = 70 + tl.length * 62;
-    const blocks = mh + bh + 70 + (T.menu ? 92 : 0) + 40;
     const gapsN = T.menu ? 4 : 3, baseGaps = 60 + 50 + 40 + (T.menu ? 36 : 0);
-    const free = Math.max(0, 1715 - 520 - blocks - baseGaps);
+    const rest = bh + 70 + (T.menu ? 92 : 0) + 40;
+    const baseW = T.menu ? 600 : 650, img0 = imgFor(type) || montyImg;
+    const wide = (img0.naturalHeight / img0.naturalWidth) < 0.8;          // e.g. lying-down Monty
+    let fitted = fitBox(type, wide ? 820 : baseW, 640);
+    const room = 1715 - 520 - rest - baseGaps;           // height left for Monty
+    if (fitted.h > room) fitted = fitBox(type, fitted.w * room / fitted.h, room);
+    const mw = fitted.w, mh = fitted.h;
+    const free = Math.max(0, room - mh);
     const extra = (free * 0.6) / gapsN;
     const montyTop = 520 + free * 0.4;
     drawMontyWithMood(ctx, type, { x: (W - mw) / 2, y: montyTop, w: mw, h: mh }, 0.6);
@@ -679,14 +718,18 @@
     y += 70 + 40 + extra;
 
     if (T.menu) {
-      ctx.font = F(500, 34); const l1 = 'Cocok minum: ';
-      ctx.font = F(700, 40); const mwid = ctx.measureText(T.menu).width;
-      ctx.font = F(500, 34); const l1w = ctx.measureText(l1).width;
-      const pw = l1w + mwid + 150;
+      const l1 = 'Cocok minum: ';
+      let s1 = 34, s2 = 40, l1w, mwid, pw;
+      do {
+        ctx.font = F(500, s1); l1w = ctx.measureText(l1).width;
+        ctx.font = F(700, s2); mwid = ctx.measureText(T.menu).width;
+        pw = l1w + mwid + 150; s1 -= 1; s2 -= 1;
+      } while (pw > 980 && s2 > 26);
+      s1 += 1; s2 += 1;
       roundRect(ctx, (W - pw) / 2, y, pw, 92, 46); ctx.fillStyle = '#2B140C'; ctx.fill();
       cup(ctx, (W - pw) / 2 + 58, y + 50, 52, 3);
-      ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillText(l1, (W - pw) / 2 + 100, y + 58);
-      ctx.font = F(700, 40); ctx.fillStyle = '#FFC66B'; ctx.fillText(T.menu, (W - pw) / 2 + 100 + l1w, y + 59);
+      ctx.font = F(500, s1); ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillText(l1, (W - pw) / 2 + 100, y + 58);
+      ctx.font = F(700, s2); ctx.fillStyle = '#FFC66B'; ctx.fillText(T.menu, (W - pw) / 2 + 100 + l1w, y + 59);
       ctx.textAlign = 'center';
       y += 92 + 36 + extra;
     }
@@ -724,7 +767,11 @@
     $('aboutText').textContent = T.text;
     const menu = $('aboutMenu');
     menu.hidden = !T.menu;
-    if (T.menu) menu.innerHTML = `Rekomendasi Monty buat kamu: <b></b>`, menu.lastChild.textContent = T.menu;
+    if (T.menu) {
+      menu.innerHTML = 'Rekomendasi Monty buat kamu: <b></b><span class="why"></span>';
+      menu.querySelector('b').textContent = T.menu;
+      menu.querySelector('.why').textContent = T.why || '';
+    }
     $('saveBtn').classList.remove('saved');
     $('saveLabel').textContent = 'Simpan ke galeri';
     const tip = $('rTip');
