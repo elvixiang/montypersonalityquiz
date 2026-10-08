@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EE5A24">
+<title>Which Monty Are You? · MONTY&amp;Co.</title>
+<meta name="description" content="7 pertanyaan receh, 1 Monty yang paling kamu banget. Kuis dari MONTY&amp;Co.">
+<meta property="og:title" content="Which Monty Are You? · MONTY&amp;Co.">
+<meta property="og:description" content="7 pertanyaan receh, 1 Monty yang paling kamu banget.">
+<link rel="icon" type="image/png" href="assets/monty.png">
+<link rel="apple-touch-icon" href="assets/monty.png">
+<link rel="preload" href="assets/monty.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #EE5A24;
+    --orange-deep: #D8431A;
+    --cream: #FFF7EE;
+    --ink: #2B140C;
+    --ink-soft: #6B4434;
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --font: 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: var(--font); color: #fff; background-color: var(--orange);
+    background-image:
+      radial-gradient(circle, rgba(255, 214, 160, .20) 0 7px, transparent 8px),
+      radial-gradient(circle, rgba(255, 214, 160, .13) 0 4px, transparent 5px),
+      linear-gradient(180deg, #F56B2D 0%, #EA521D 100%);
+    background-size: 64px 64px, 64px 64px, 100% 100%;
+    background-position: 0 0, 32px 32px, 0 0;
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;
+    -webkit-user-select: none; user-select: none; touch-action: manipulation;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  .app { max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+         padding: calc(var(--safe-t) + 12px) 18px calc(var(--safe-b) + 20px); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+  .wordmark { font-size: 15px; font-weight: 700; letter-spacing: .1em; }
+  .wordmark b { color: #FFE2B0; font-weight: 700; }
+  .icon-btn {
+    width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; color: #fff; text-decoration: none;
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.38); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: transform .15s ease;
+  }
+  .icon-btn:active { transform: scale(.92); }
+
+  .screen { flex: 1; display: flex; flex-direction: column; animation: screenIn .45s cubic-bezier(.2, .9, .25, 1) both; }
+  @keyframes screenIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 22px;
+    border-radius: 999px; border: 0; font-size: 16px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    text-decoration: none; transition: transform .15s ease, background .2s ease, color .2s ease;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn-white { width: 100%; min-height: 60px; color: var(--orange-deep); background: #fff; font-size: 17px; box-shadow: 0 10px 22px rgba(110, 30, 0, .25); }
+  .btn-white.saved { background: #FFF1D6; color: #B4400F; }
+  .btn-ghost { flex: 1 1 0; color: #fff; background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.55); min-height: 50px; font-size: 14.5px; padding: 0 14px; }
+  .btn-ink { width: 100%; color: #fff; background: var(--ink); min-height: 52px; font-size: 14.5px; letter-spacing: .04em; }
+
+  /* Intro */
+  .intro { align-items: center; text-align: center; justify-content: center; gap: 6px; padding-bottom: 8px; }
+  .hero { position: relative; width: min(78vw, 330px); aspect-ratio: 1; margin: 4px auto 0; }
+  .hero canvas { width: 100%; height: 100%; display: block; }
+  .mood-chip {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: -6px; padding: 8px 16px; border-radius: 999px;
+    background: rgba(28, 10, 4, .35); font-size: 15px; font-weight: 600; min-height: 38px; transition: opacity .25s ease;
+  }
+  .intro h1 { margin: 16px 0 0; font-size: clamp(36px, 11vw, 48px); line-height: .98; font-weight: 700; letter-spacing: .01em; text-transform: uppercase; text-shadow: 0 4px 0 rgba(140, 40, 0, .25); }
+  .intro .lead { margin: 10px auto 22px; font-size: 17px; line-height: 1.4; font-weight: 500; max-width: 330px; opacity: .96; }
+  .intro .meta { margin: 12px 0 0; font-size: 13.5px; font-weight: 500; opacity: .9; }
+
+  /* Question */
+  .q-top { display: flex; align-items: center; gap: 12px; margin: 6px 0 18px; }
+  .back {
+    width: 44px; height: 44px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.38);
+  }
+  .back:disabled { visibility: hidden; }
+  .progress { flex: 1; height: 10px; border-radius: 999px; background: rgba(255,255,255,.25); overflow: hidden; }
+  .progress span { display: block; height: 100%; width: 0; border-radius: inherit; background: #fff; transition: width .4s cubic-bezier(.2,.9,.25,1); }
+  .count { font-size: 15px; font-weight: 700; min-width: 36px; text-align: right; }
+  .q-card { position: relative; }
+  .q-text { margin: 0 0 18px; font-size: 25px; line-height: 1.22; font-weight: 700; text-wrap: balance; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .opt {
+    display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 12px 16px; border: 0; border-radius: 20px;
+    background: #fff; color: var(--ink); text-align: left; font-size: 17px; line-height: 1.3; font-weight: 500;
+    box-shadow: 0 8px 18px rgba(110, 30, 0, .18); transition: transform .15s ease, background .2s ease, color .2s ease;
+    animation: optIn .4s cubic-bezier(.2,.9,.25,1) both;
+  }
+  .opt:nth-child(2) { animation-delay: .05s; } .opt:nth-child(3) { animation-delay: .1s; } .opt:nth-child(4) { animation-delay: .15s; }
+  @keyframes optIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .opt:active { transform: scale(.98); }
+  .opt .key {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+    background: #FFE4CC; color: var(--orange-deep); font-weight: 700; font-size: 16px;
+  }
+  .opt.picked { background: var(--ink); color: #fff; }
+  .opt.picked .key { background: #FFB547; color: var(--ink); }
+  .peek { position: fixed; right: max(8px, calc(50vw - 250px)); bottom: calc(var(--safe-b) - 34px); width: 120px; pointer-events: none;
+          transform: rotate(-8deg); transition: transform .3s cubic-bezier(.3,1.5,.4,1); z-index: 1; }
+  .peek.hop { transform: rotate(-4deg) translateY(-18px); }
+
+  /* Thinking */
+  .thinking { align-items: center; justify-content: center; text-align: center; gap: 18px; }
+  .thinking img { width: 180px; animation: wobble .6s ease-in-out infinite alternate; }
+  @keyframes wobble { from { transform: rotate(-7deg) translateY(0); } to { transform: rotate(7deg) translateY(-8px); } }
+  .thinking p { margin: 0; font-size: 20px; font-weight: 700; }
+  .dots::after { content: ''; animation: dots 1s steps(4) infinite; }
+  @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+
+  /* Result */
+  .result { align-items: center; gap: 14px; }
+  .r-kicker { margin: 4px 0 0; font-size: 15px; font-weight: 600; opacity: .95; text-align: center; }
+  .card-wrap { height: 460px; height: clamp(300px, calc(100vh - 330px), 640px); aspect-ratio: 9 / 16; flex: 0 0 auto; }
+  @supports (height: 100dvh) { .card-wrap { height: clamp(300px, calc(100dvh - 330px), 640px); } }
+  .card-img {
+    display: block; width: 100%; height: 100%; border-radius: 22px; background: rgba(0,0,0,.15);
+    box-shadow: 0 0 0 4px #fff, 0 20px 40px rgba(95, 25, 0, .38);
+    -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto;
+    animation: dropIn .7s cubic-bezier(.2, 1.25, .3, 1) both .05s;
+  }
+  @keyframes dropIn { 0% { opacity: 0; transform: translateY(26px) scale(.92) rotate(-3deg); } 100% { opacity: 1; transform: none; } }
+  .r-tip { margin: -2px 0 0; font-size: 13px; text-align: center; font-weight: 500; opacity: .95; }
+  .actions { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; gap: 10px; }
+  .about {
+    width: 100%; padding: 18px; border-radius: 22px; background: var(--cream); color: var(--ink);
+    box-shadow: 0 10px 24px rgba(110, 30, 0, .2);
+  }
+  .about h2 { margin: 0 0 6px; font-size: 20px; line-height: 1.2; }
+  .about p { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--ink-soft); font-weight: 500; -webkit-user-select: text; user-select: text; }
+  .about .menu { margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: #FFE9D3; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .about .menu b { color: var(--orange-deep); }
+  .ig { display: flex; align-items: center; gap: 12px; margin: 16px 0 12px; }
+  .ig-badge {
+    flex: 0 0 auto; width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; color: #fff;
+    background: radial-gradient(circle at 30% 107%, #FDD25E 0%, #FD9440 25%, #E6366B 55%, #B13BB5 80%, #6448D6 100%);
+  }
+  .ig strong { display: block; font-size: 16px; line-height: 1.2; }
+  .ig span { display: block; font-size: 13.5px; color: var(--ink-soft); font-weight: 500; }
+  .link-booth { width: 100%; }
+
+  .toast {
+    position: fixed; z-index: 40; left: 50%; bottom: calc(var(--safe-b) + 22px); transform: translate(-50%, 20px);
+    max-width: calc(100% - 40px); padding: 12px 18px; border-radius: 999px; background: var(--ink); color: #fff;
+    font-size: 14.5px; font-weight: 600; text-align: center; box-shadow: 0 12px 26px rgba(0,0,0,.25);
+    opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  @media (max-height: 700px) { .intro .lead { margin-bottom: 16px; } .hero { width: min(64vw, 270px); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <span class="wordmark">MONTY<b>&amp;Co.</b></span>
+    <a class="icon-btn" id="igTop" href="https://www.instagram.com/montyandco.id/" target="_blank" rel="noopener" aria-label="MONTY&amp;Co. di Instagram">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>
+  </header>
+
+  <!-- INTRO -->
+  <section class="screen intro" id="sIntro">
+    <div class="hero"><canvas id="heroCanvas" aria-label="Monty dengan berbagai mood"></canvas></div>
+    <div class="mood-chip" id="moodChip" aria-live="polite">Monty Kepanasan?</div>
+    <h1>Which Monty<br>are you?</h1>
+    <p class="lead">7 pertanyaan receh. 1 Monty yang paling kamu banget.</p>
+    <button class="btn btn-white" id="startBtn" type="button">Mulai kuis</button>
+    <p class="meta">Cuma 1 menit · Hasilnya siap dipamerin di Story</p>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="screen" id="sQuestion" hidden>
+    <div class="q-top">
+      <button class="back" id="backBtn" type="button" aria-label="Pertanyaan sebelumnya">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+      <span class="count" id="count">1/7</span>
+    </div>
+    <div class="q-card" id="qCard">
+      <h2 class="q-text" id="qText" aria-live="polite"></h2>
+      <div class="options" id="options"></div>
+    </div>
+    <img class="peek" id="peek" src="assets/monty.png" alt="" draggable="false">
+  </section>
+
+  <!-- THINKING -->
+  <section class="screen thinking" id="sThinking" hidden>
+    <img src="assets/monty.png" alt="" draggable="false">
+    <p><span>Monty lagi mikir</span><span class="dots"></span></p>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen result" id="sResult" hidden>
+    <p class="r-kicker">Kamu adalah…</p>
+    <div class="card-wrap"><img class="card-img" id="cardImg" alt=""></div>
+    <p class="r-tip" id="rTip" hidden></p>
+    <div class="actions">
+      <button class="btn btn-white" id="saveBtn" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg>
+        <span id="saveLabel">Simpan ke galeri</span>
+      </button>
+      <div class="row">
+        <button class="btn btn-ghost" id="againBtn" type="button">Ulangi</button>
+        <button class="btn btn-ghost" id="challengeBtn" type="button">Tantang teman</button>
+      </div>
+    </div>
+    <div class="about">
+      <h2 id="aboutTitle"></h2>
+      <p id="aboutText"></p>
+      <div class="menu" id="aboutMenu" hidden></div>
+      <div class="ig">
+        <span class="ig-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></span>
+        <div><strong>Pamerin hasilmu!</strong><span>Upload ke Story &amp; tag @montyandco.id</span></div>
+      </div>
+      <a class="btn btn-ink" id="igFollow" href="https://www.instagram.com/montyandco.id/" target="_blank" rel="noopener">Follow @montyandco.id</a>
+    </div>
+    <a class="btn btn-ghost link-booth" id="boothLink" href="#" target="_blank" rel="noopener" hidden>📸 Foto bareng Monty</a>
+  </section>
+</div>
+
+<img id="montyImg" src="assets/monty.png" alt="" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ================== EASY SETTINGS ================== */
+  const CONFIG = {
+    montySrc: 'assets/monty.png',
+    instagramHandle: '@montyandco.id',
+    instagramUrl: 'https://www.instagram.com/montyandco.id/',
+    photoBoothUrl: '',          // e.g. 'https://your-photobooth.vercel.app' → shows a "Foto bareng Monty" button
+    quizLabel: '',              // text on the card footer; empty = this website's address
+  };
+
+  // Each Monty type. "menu" = drink recommendation (leave '' to hide). "img" = optional custom PNG for this mood.
+  const TYPES = {
+    hot: {
+      name: 'Monty Kepanasan', en: 'TOO HOT MONTY',
+      tagline: 'Jakarta selalu 2 derajat lebih panas khusus buat kamu.',
+      text: 'Kamu gampang gerah, tapi justru itu yang bikin kamu selalu tahu mana yang paling seger. Energi kamu kayak matahari jam 12: terang, hangat… kadang kebanyakan.',
+      traits: ['Gampang gerah', 'Pecinta es', 'Hangat'],
+      menu: 'Lemon Crush', partner: 'excited', img: '',
+      bg: '#FFCF3F', ink: '#3A1C10', chip: 'rgba(255,255,255,.55)'
+    },
+    blush: {
+      name: 'Monty Baper', en: 'BLUSHING MONTY',
+      tagline: 'Dipuji dikit, pipi langsung pink.',
+      text: 'Hati kamu selembut busa milk tea. Gampang salting, gampang terharu, tapi itu yang bikin orang betah di dekat kamu.',
+      traits: ['Gampang salting', 'Romantis', 'Perhatian'],
+      menu: '', partner: 'angry', img: '',
+      bg: '#FFB3CB', ink: '#4A1630', chip: 'rgba(255,255,255,.55)'
+    },
+    angry: {
+      name: 'Monty Gagal Galak', en: 'FAKE ANGRY MONTY',
+      tagline: 'Niatnya galak, hasilnya gemes.',
+      text: 'Kamu kelihatan tegas dan hobi ngomel, tapi semua orang tahu kamu yang paling soft. Persis Monty: mau nyeremin, malah pipinya merah.',
+      traits: ['Tsundere', 'Setia', 'Ngomel tanda sayang'],
+      menu: '', partner: 'blush', img: '',
+      bg: '#7A66F2', ink: '#FFFFFF', chip: 'rgba(255,255,255,.2)'
+    },
+    excited: {
+      name: 'Monty Semangat', en: 'EXCITED MONTY',
+      tagline: 'Baterai sosial kamu nggak ada habisnya.',
+      text: 'Kamu yang paling heboh di grup, paling cepat bilang "ayo!", dan paling sering bikin rencana dadakan yang ternyata seru banget.',
+      traits: ['Heboh', 'Spontan', 'Moodbooster'],
+      menu: '', partner: 'hot', img: '',
+      bg: '#3FD0C9', ink: '#0E3A3A', chip: 'rgba(255,255,255,.5)'
+    },
+    sleepy: {
+      name: 'Monty Mager', en: 'SLEEPY MONTY',
+      tagline: 'Mode hemat energi: selalu aktif.',
+      text: 'Kamu percaya semua masalah bisa selesai setelah tidur siang. Santai, kalem, anti drama, dan jago banget menikmati hidup pelan-pelan.',
+      traits: ['Kalem', 'Anti drama', 'Ahli rebahan'],
+      menu: '', partner: 'hungry', img: '',
+      bg: '#2B3A80', ink: '#FFFFFF', chip: 'rgba(255,255,255,.18)'
+    },
+    hungry: {
+      name: 'Monty Laper', en: 'HUNGRY MONTY',
+      tagline: 'Baru makan, udah mikirin makan berikutnya.',
+      text: 'Buat kamu, semua acara itu acara makan. Kamu tahu tempat jajan terenak dan selalu jadi orang yang ditanya "makan di mana?"',
+      traits: ['Foodie', 'Royal', 'Pemandu kuliner'],
+      menu: '', partner: 'sleepy', img: '',
+      bg: '#9BE15D', ink: '#1F3A10', chip: 'rgba(255,255,255,.55)'
+    }
+  };
+
+  const QUESTIONS = [
+    { q: 'Jam 2 siang, AC kantor tiba-tiba mati. Kamu…', a: [
+      ['Langsung meleleh. Ini hari terburuk.', 'hot'],
+      ['Ngomel, tapi tetap kipas-kipasin teman.', 'angry'],
+      ['Yaudah, tidur aja sekalian.', 'sleepy'],
+      ['Kesempatan! Turun jajan es.', 'hungry']] },
+    { q: 'Crush kamu bales chat: "haha iya". Reaksi kamu…', a: [
+      ['Senyum-senyum sendiri, pipi panas.', 'blush'],
+      ['Screenshot, kirim ke grup, bahas 2 jam.', 'excited'],
+      ['Bales "oke" doang. Jual mahal.', 'angry'],
+      ['Ketiduran sebelum sempat bales.', 'sleepy']] },
+    { q: 'Weekend ideal kamu…', a: [
+      ['Rebahan full, HP di dada.', 'sleepy'],
+      ['Kulineran dari pagi sampai malam.', 'hungry'],
+      ['Ikut semua acara. FOMO is real.', 'excited'],
+      ['Ngadem di mall seharian.', 'hot']] },
+    { q: 'Teman telat 1 jam. Kamu…', a: [
+      ['Ngomel di chat… lalu bilang "gapapa kok" pas dia datang.', 'angry'],
+      ['Udah pesan makanan duluan, sorry.', 'hungry'],
+      ['Nunggu di luar sambil keringetan.', 'hot'],
+      ['Malu-malu bilang "aku juga baru sampai kok".', 'blush']] },
+    { q: 'Kalau dipuji di depan banyak orang…', a: [
+      ['Merah kayak tomat.', 'blush'],
+      ['Teriak "MAKASIH!!" kenceng banget.', 'excited'],
+      ['Pura-pura cool, padahal seneng.', 'angry'],
+      ['Bilang makasih, terus "makan yuk?"', 'hungry']] },
+    { q: 'Pilih satu, cepat!', a: [
+      ['Es batu sekarung', 'hot'],
+      ['Kasur empuk', 'sleepy'],
+      ['Konser dadakan', 'excited'],
+      ['Surat cinta anonim', 'blush']] },
+    { q: 'Kalimat yang paling sering kamu bilang…', a: [
+      ['"Panas banget sih hari ini."', 'hot'],
+      ['"Bentar, 5 menit lagi…"', 'sleepy'],
+      ['"AYO GAS!"', 'excited'],
+      ['"Aku nggak marah ya. Cuma kesel."', 'angry']] }
+  ];
+  /* =================================================== */
+
+  const $ = (id) => document.getElementById(id);
+  const screens = { intro: $('sIntro'), question: $('sQuestion'), thinking: $('sThinking'), result: $('sResult') };
+  const montyImg = $('montyImg');
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const ORDER = ['hot', 'blush', 'angry', 'excited', 'sleepy', 'hungry'];
+  const KEYS = ['A', 'B', 'C', 'D'];
+
+  $('igTop').href = CONFIG.instagramUrl;
+  $('igFollow').href = CONFIG.instagramUrl;
+  $('igFollow').textContent = 'Follow ' + CONFIG.instagramHandle;
+  if (CONFIG.photoBoothUrl) { $('boothLink').href = CONFIG.photoBoothUrl; $('boothLink').hidden = false; }
+
+  const fontsReady = (document.fonts && document.fonts.load)
+    ? Promise.race([
+        Promise.all(['700 60px Fredoka', '600 30px Fredoka', '500 30px Fredoka'].map((f) => document.fonts.load(f))),
+        new Promise((r) => setTimeout(r, 2500))
+      ]).catch(() => {})
+    : Promise.resolve();
+  const imgReady = (img) => (img.complete && img.naturalWidth) ? Promise.resolve() : new Promise((r) => { img.onload = r; img.onerror = r; });
+
+  const customImgs = {};
+  ORDER.forEach((k) => { if (TYPES[k].img) { const i = new Image(); i.src = TYPES[k].img; customImgs[k] = i; } });
+
+  function show(name) {
+    Object.entries(screens).forEach(([k, el]) => { el.hidden = k !== name; });
+    window.scrollTo(0, 0);
+    if (name === 'intro') startHero(); else stopHero();
+  }
+
+  /* ---------- Drawing helpers (shared by hero + result card) ---------- */
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function heart(ctx, cx, cy, s, fill, stroke, lw) {
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(s / 24, s / 24); ctx.translate(-12, -12);
+    ctx.beginPath();
+    ctx.moveTo(12, 21);
+    ctx.bezierCurveTo(12, 21, 2.5, 15.5, 2.5, 9);
+    ctx.bezierCurveTo(2.5, 5.5, 5, 3.5, 7.7, 3.5);
+    ctx.bezierCurveTo(9.6, 3.5, 11.2, 4.6, 12, 6.2);
+    ctx.bezierCurveTo(12.8, 4.6, 14.4, 3.5, 16.3, 3.5);
+    ctx.bezierCurveTo(19, 3.5, 21.5, 5.5, 21.5, 9);
+    ctx.bezierCurveTo(21.5, 15.5, 12, 21, 12, 21);
+    ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+    if (stroke) { ctx.lineWidth = lw * 24 / s; ctx.strokeStyle = stroke; ctx.stroke(); }
+    ctx.restore();
+  }
+  function star4(ctx, cx, cy, r, fill, stroke, lw) {
+    ctx.save(); ctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4 - Math.PI / 2, rr = i % 2 ? r * 0.36 : r;
+      const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+    if (stroke) { ctx.lineWidth = lw; ctx.strokeStyle = stroke; ctx.lineJoin = 'round'; ctx.stroke(); }
+    ctx.restore();
+  }
+  function drop(ctx, cx, cy, s, lw) {
+    ctx.save(); ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s * 0.15, -s * 0.6, s * 0.62, -s * 0.1, s * 0.62, s * 0.3);
+    ctx.arc(0, s * 0.3, s * 0.62, 0, Math.PI);
+    ctx.bezierCurveTo(-s * 0.62, -s * 0.1, -s * 0.15, -s * 0.6, 0, -s);
+    ctx.closePath();
+    ctx.fillStyle = '#8FD4F5'; ctx.fill();
+    ctx.lineWidth = lw; ctx.strokeStyle = '#2B6C8F'; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-s * 0.22, s * 0.18, s * 0.12, s * 0.2, -0.4, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fill();
+    ctx.restore();
+  }
+  function citrus(ctx, cx, cy, r, rind, flesh, lw) {
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fillStyle = rind; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.82, 0, Math.PI * 2); ctx.fillStyle = flesh; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = lw;
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.8, cy + Math.sin(a) * r * 0.8); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.12, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fill();
+    ctx.restore();
+  }
+  function cup(ctx, cx, cy, s, lw) {        // a MONTY&Co.-style drink cup
+    ctx.save(); ctx.translate(cx, cy);
+    const tw = s * 0.62, bw = s * 0.46, h = s;
+    ctx.lineJoin = 'round'; ctx.lineWidth = lw; ctx.strokeStyle = '#2B140C';
+    ctx.beginPath(); ctx.moveTo(s * 0.06, -h * 0.62); ctx.lineTo(s * 0.2, -h * 0.95); ctx.lineWidth = lw * 1.6; ctx.strokeStyle = '#E8333A'; ctx.stroke();
+    ctx.lineWidth = lw; ctx.strokeStyle = '#2B140C';
+    ctx.beginPath(); ctx.moveTo(-tw / 2, -h * 0.5); ctx.lineTo(tw / 2, -h * 0.5); ctx.lineTo(bw / 2, h * 0.5); ctx.lineTo(-bw / 2, h * 0.5); ctx.closePath();
+    ctx.fillStyle = '#FFF4E0'; ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-tw * 0.47, -h * 0.12); ctx.lineTo(tw * 0.47, -h * 0.12); ctx.lineTo(tw * 0.42, h * 0.12); ctx.lineTo(-tw * 0.42, h * 0.12); ctx.closePath();
+    ctx.fillStyle = '#F46A2C'; ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, -h * 0.5, tw / 2 + lw, h * 0.1, 0, Math.PI, 0); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+  function wrapLines(ctx, text, maxW) {
+    const words = text.split(' '), lines = []; let line = '';
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  function fitFont(ctx, text, weight, size, maxW) {
+    let s = size;
+    do { ctx.font = `${weight} ${s}px Fredoka, ui-rounded, system-ui, sans-serif`; s -= 2; } while (ctx.measureText(text).width > maxW && s > 20);
+    return s + 2;
+  }
+
+  // Mood props drawn AROUND Monty (Monty himself is never changed).
+  function drawMood(ctx, type, b, t) {
+    const s = b.w / 700, lw = 5 * s, wob = (k) => Math.sin(t * 3 + k) * 6 * s;
+    ctx.save();
+    if (type === 'hot') {
+      ctx.strokeStyle = '#E2451B'; ctx.lineWidth = 11 * s; ctx.lineCap = 'round';
+      [0.36, 0.5, 0.64].forEach((fx, i) => {
+        const x = b.x + b.w * fx + wob(i), y0 = b.y - b.h * 0.03, seg = b.h * 0.055;
+        ctx.beginPath(); ctx.moveTo(x, y0);
+        ctx.quadraticCurveTo(x - 18 * s, y0 - seg * 0.5, x, y0 - seg);
+        ctx.quadraticCurveTo(x + 18 * s, y0 - seg * 1.5, x, y0 - seg * 2);
+        ctx.quadraticCurveTo(x - 18 * s, y0 - seg * 2.5, x, y0 - seg * 3);
+        ctx.stroke();
+      });
+      drop(ctx, b.x + b.w * 0.92, b.y + b.h * 0.2 + wob(1) * 0.6, 44 * s, lw);
+      drop(ctx, b.x + b.w * 0.05, b.y + b.h * 0.34 + wob(2) * 0.6, 34 * s, lw);
+      drop(ctx, b.x + b.w * 1.0, b.y + b.h * 0.42, 26 * s, lw);
+    } else if (type === 'blush') {
+      heart(ctx, b.x + b.w * 0.94, b.y + b.h * 0.06 + wob(0), 110 * s, '#FF5C8A', '#FFFFFF', 7 * s);
+      heart(ctx, b.x + b.w * 0.06, b.y + b.h * 0.14 + wob(1), 80 * s, '#FF7FA6', '#FFFFFF', 6 * s);
+      heart(ctx, b.x + b.w * 1.02, b.y + b.h * 0.42 + wob(2), 58 * s, '#FF7FA6', '#FFFFFF', 5 * s);
+      heart(ctx, b.x - b.w * 0.02, b.y + b.h * 0.52 + wob(3), 46 * s, '#FF5C8A', '#FFFFFF', 5 * s);
+      heart(ctx, b.x + b.w * 0.5, b.y - b.h * 0.1 + wob(4), 52 * s, '#FF5C8A', '#FFFFFF', 5 * s);
+    } else if (type === 'angry') {
+      // anger mark
+      const ax = b.x + b.w * 0.9, ay = b.y + b.h * 0.08, r = 60 * s;
+      ctx.strokeStyle = '#E8333A'; ctx.lineWidth = 14 * s; ctx.lineCap = 'round';
+      for (let i = 0; i < 4; i++) {
+        ctx.save(); ctx.translate(ax, ay); ctx.rotate(i * Math.PI / 2 + Math.sin(t * 6) * 0.06);
+        ctx.beginPath(); ctx.moveTo(r * 0.25, -r * 0.85); ctx.quadraticCurveTo(r * 0.25, -r * 0.25, r * 0.85, -r * 0.25); ctx.stroke();
+        ctx.restore();
+      }
+      // RAWR bubble
+      const bx = b.x - b.w * 0.1, by = b.y - b.h * 0.12, bw = b.w * 0.46, bh = b.h * 0.2;
+      ctx.save(); ctx.translate(bx + bw / 2, by + bh / 2); ctx.rotate(-0.12);
+      roundRect(ctx, -bw / 2, -bh / 2, bw, bh, 40 * s); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.lineWidth = 6 * s; ctx.strokeStyle = '#2B140C'; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bw * 0.22, bh * 0.42); ctx.lineTo(bw * 0.38, bh * 0.85); ctx.lineTo(bw * 0.05, bh * 0.47); ctx.closePath();
+      ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.stroke();
+      roundRect(ctx, bw * 0.02, bh * 0.36, bw * 0.24, bh * 0.16, 4 * s); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#E8333A'; ctx.font = `700 ${Math.round(74 * s)}px Fredoka, ui-rounded, sans-serif`; ctx.fillText('RAWR!', 0, -bh * 0.08);
+      ctx.fillStyle = '#6B4434'; ctx.font = `500 ${Math.round(30 * s)}px Fredoka, ui-rounded, sans-serif`; ctx.fillText('(gagal)', 0, bh * 0.28);
+      ctx.restore();
+    } else if (type === 'excited') {
+      const tw = (k) => 1 + Math.sin(t * 5 + k) * 0.18;
+      star4(ctx, b.x + b.w * 0.95, b.y + b.h * 0.02, 62 * s * tw(0), '#FFE14A', '#FFFFFF', 6 * s);
+      star4(ctx, b.x + b.w * 0.04, b.y + b.h * 0.1, 48 * s * tw(1), '#FFFFFF', '', 0);
+      star4(ctx, b.x + b.w * 1.04, b.y + b.h * 0.48, 36 * s * tw(2), '#FFFFFF', '', 0);
+      star4(ctx, b.x - b.w * 0.04, b.y + b.h * 0.56, 40 * s * tw(3), '#FFE14A', '#FFFFFF', 5 * s);
+      star4(ctx, b.x + b.w * 0.52, b.y - b.h * 0.1, 34 * s * tw(4), '#FFE14A', '#FFFFFF', 5 * s);
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 9 * s; ctx.lineCap = 'round';
+      [[-0.1, 0.3], [-0.12, 0.38], [1.1, 0.22], [1.12, 0.3]].forEach(([fx, fy]) => {
+        const x = b.x + b.w * fx, y = b.y + b.h * fy, d = fx < 0 ? -1 : 1;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + d * 40 * s, y - 10 * s); ctx.stroke();
+      });
+    } else if (type === 'sleepy') {
+      ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      [[0.86, 0.08, 56], [0.97, -0.04, 72], [1.07, -0.18, 90]].forEach(([fx, fy, sz], i) => {
+        ctx.save(); ctx.globalAlpha = 0.65 + 0.35 * Math.abs(Math.sin(t * 1.5 + i));
+        ctx.translate(b.x + b.w * fx, b.y + b.h * fy + wob(i)); ctx.rotate(-0.2);
+        ctx.font = `700 ${Math.round(sz * s)}px Fredoka, ui-rounded, sans-serif`; ctx.fillText('Z', 0, 0); ctx.restore();
+      });
+      const mx = b.x + b.w * 0.02, my = b.y - b.h * 0.02, mr = 62 * s;   // crescent moon
+      ctx.beginPath(); ctx.arc(mx, my, mr, Math.PI * 0.35, Math.PI * 1.65, false);
+      ctx.arc(mx + mr * 0.45, my - mr * 0.12, mr * 0.82, Math.PI * 1.5, Math.PI * 0.5, true);
+      ctx.closePath(); ctx.fillStyle = '#FFD98A'; ctx.fill();
+      star4(ctx, b.x + b.w * 0.22, b.y - b.h * 0.12, 22 * s, '#FFD98A', '', 0);
+      star4(ctx, b.x - b.w * 0.08, b.y + b.h * 0.24, 16 * s, '#FFFFFF', '', 0);
+    } else if (type === 'hungry') {
+      cup(ctx, b.x + b.w * 0.97, b.y + b.h * 0.12 + wob(0), 150 * s, 6 * s);
+      citrus(ctx, b.x + b.w * 0.02, b.y + b.h * 0.12 + wob(1), 62 * s, '#FF8A1F', '#FFC266', 5 * s);
+      citrus(ctx, b.x + b.w * 1.04, b.y + b.h * 0.52 + wob(2), 46 * s, '#F5C518', '#FFE98A', 4 * s);
+      citrus(ctx, b.x - b.w * 0.05, b.y + b.h * 0.58 + wob(3), 38 * s, '#FF8A1F', '#FFC266', 4 * s);
+      ctx.save(); ctx.translate(b.x + b.w * 0.5, b.y - b.h * 0.08); ctx.rotate(-0.08);
+      ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `700 ${Math.round(64 * s)}px Fredoka, ui-rounded, sans-serif`;
+      ctx.lineWidth = 10 * s; ctx.strokeStyle = '#2B140C'; ctx.lineJoin = 'round';
+      ctx.strokeText('nyam!', 0, 0); ctx.fillText('nyam!', 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawMontyWithMood(ctx, type, b, t) {
+    const custom = customImgs[type];
+    const img = custom && custom.complete && custom.naturalWidth ? custom : montyImg;
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(b.x + b.w / 2, b.y + b.h * 0.99, b.w * 0.3, b.h * 0.045, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 10, 0, .14)'; ctx.fill();
+    const tilt = type === 'sleepy' ? -0.08 : type === 'excited' ? 0.05 : 0;
+    const hop = type === 'excited' ? -Math.abs(Math.sin(t * 4)) * b.h * 0.03 : 0;
+    ctx.translate(b.x + b.w / 2, b.y + b.h / 2 + hop); ctx.rotate(tilt);
+    ctx.drawImage(img, -b.w / 2, -b.h / 2, b.w, b.h);
+    ctx.restore();
+    if (!custom) drawMood(ctx, type, b, t);
+  }
+
+  /* ---------- Intro hero (cycles through moods) ---------- */
+  const hero = $('heroCanvas'), hctx = hero.getContext('2d'), moodChip = $('moodChip');
+  let heroRaf = 0, heroStart = 0, heroIdx = -1;
+  function sizeHero() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), r = hero.getBoundingClientRect();
+    hero.width = Math.round(r.width * dpr); hero.height = Math.round(r.height * dpr);
+  }
+  function heroFrame(now) {
+    heroRaf = requestAnimationFrame(heroFrame);
+    if (!heroStart) heroStart = now;
+    const el = (now - heroStart) / 1000, idx = Math.floor(el / 1.7) % ORDER.length, type = ORDER[idx];
+    if (idx !== heroIdx) { heroIdx = idx; moodChip.textContent = TYPES[type].name + '?'; }
+    const W = hero.width, H = hero.height;
+    hctx.clearRect(0, 0, W, H);
+    hctx.beginPath(); hctx.arc(W / 2, H / 2, W * 0.46, 0, Math.PI * 2); hctx.fillStyle = TYPES[type].bg; hctx.fill();
+    hctx.lineWidth = W * 0.012; hctx.strokeStyle = '#FFFFFF'; hctx.stroke();
+    const p = (el % 1.7) / 1.7, pop = p < 0.12 ? 0.9 + (p / 0.12) * 0.1 : 1;
+    const w = W * 0.56 * pop, h = w * (montyImg.naturalHeight / montyImg.naturalWidth || 0.948);
+    drawMontyWithMood(hctx, type, { x: (W - w) / 2, y: H * 0.54 - h / 2, w, h }, el);
+  }
+  function startHero() { if (heroRaf) return; sizeHero(); heroStart = 0; heroIdx = -1; Promise.all([imgReady(montyImg), fontsReady]).then(() => { if (!heroRaf) heroRaf = requestAnimationFrame(heroFrame); }); }
+  function stopHero() { cancelAnimationFrame(heroRaf); heroRaf = 0; }
+  window.addEventListener('resize', () => { if (heroRaf) sizeHero(); });
+
+  /* ---------- Quiz flow ---------- */
+  let step = 0, answers = [], locked = false;
+  const qText = $('qText'), optionsEl = $('options'), bar = $('bar'), count = $('count'), backBtn = $('backBtn'), peek = $('peek');
+
+  function renderQuestion() {
+    const Q = QUESTIONS[step];
+    qText.textContent = Q.q;
+    count.textContent = `${step + 1}/${QUESTIONS.length}`;
+    bar.style.width = `${(step / QUESTIONS.length) * 100}%`;
+    backBtn.disabled = step === 0;
+    optionsEl.innerHTML = '';
+    Q.a.forEach(([label, type], i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'opt';
+      b.innerHTML = `<span class="key">${KEYS[i]}</span><span></span>`;
+      b.lastChild.textContent = label;
+      if (answers[step] === type) b.classList.add('picked');
+      b.addEventListener('click', () => pick(i, type, b));
+      optionsEl.appendChild(b);
+    });
+  }
+
+  function pick(i, type, btn) {
+    if (locked) return;
+    locked = true;
+    answers[step] = type;
+    [...optionsEl.children].forEach((c) => c.classList.toggle('picked', c === btn));
+    bar.style.width = `${((step + 1) / QUESTIONS.length) * 100}%`;
+    peek.classList.add('hop'); setTimeout(() => peek.classList.remove('hop'), 260);
+    if (navigator.vibrate) { try { navigator.vibrate(8); } catch (_) {} }
+    setTimeout(() => {
+      locked = false;
+      if (step < QUESTIONS.length - 1) { step++; renderQuestion(); }
+      else finish();
+    }, 320);
+  }
+
+  backBtn.addEventListener('click', () => { if (step > 0 && !locked) { step--; renderQuestion(); } });
+
+  $('startBtn').addEventListener('click', () => { step = 0; answers = []; show('question'); renderQuestion(); });
+
+  function score() {
+    const pts = Object.fromEntries(ORDER.map((k) => [k, 0]));
+    answers.forEach((t, i) => { pts[t] += 1 + i * 0.01; });          // later answers break ties
+    return ORDER.reduce((best, k) => (pts[k] > pts[best] ? k : best), ORDER[0]);
+  }
+
+  /* ---------- Result card (1080×1920, Instagram Story) ---------- */
+  async function renderCard(type) {
+    await Promise.all([imgReady(montyImg), fontsReady, customImgs[type] ? imgReady(customImgs[type]) : null]);
+    const T = TYPES[type], W = 1080, H = 1920;
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+    const F = (w, px) => `${w} ${px}px Fredoka, ui-rounded, system-ui, sans-serif`;
+
+    ctx.fillStyle = T.bg; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,.16)';
+    for (let y = 40, r = 0; y < H; y += 92, r++) for (let x = (r % 2) * 46 + 40; x < W; x += 92) { ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2); ctx.fill(); }
+
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = T.ink;
+    ctx.globalAlpha = 0.85; ctx.font = F(600, 42); ctx.fillText('Kamu adalah…', W / 2, 150); ctx.globalAlpha = 1;
+    fitFont(ctx, T.name, 700, 118, 960); ctx.fillText(T.name, W / 2, 280);
+    ctx.font = F(600, 32);
+    const ew = ctx.measureText(T.en).width + 56;
+    roundRect(ctx, (W - ew) / 2, 312, ew, 58, 29); ctx.fillStyle = T.chip; ctx.fill();
+    ctx.fillStyle = T.ink; ctx.fillText(T.en, W / 2, 352);
+
+    // Layout pass: share the free space so every card fills the Story nicely.
+    const mw = T.menu ? 640 : 690, mh = mw * (montyImg.naturalHeight / montyImg.naturalWidth || 0.948);
+    ctx.font = F(700, 50);
+    const tl = wrapLines(ctx, T.tagline, 820);
+    const bh = 70 + tl.length * 62;
+    const blocks = mh + bh + 70 + (T.menu ? 92 : 0) + 40;
+    const gapsN = T.menu ? 4 : 3, baseGaps = 60 + 50 + 40 + (T.menu ? 36 : 0);
+    const free = Math.max(0, 1715 - 520 - blocks - baseGaps);
+    const extra = (free * 0.6) / gapsN;
+    const montyTop = 520 + free * 0.4;
+    drawMontyWithMood(ctx, type, { x: (W - mw) / 2, y: montyTop, w: mw, h: mh }, 0.6);
+
+    let y = montyTop + mh + 60 + extra;
+    roundRect(ctx, 90, y, 900, bh, 44); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(W / 2 - 34, y + 2); ctx.lineTo(W / 2, y - 30); ctx.lineTo(W / 2 + 34, y + 2); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#2B140C';
+    tl.forEach((l, i) => ctx.fillText(l, W / 2, y + 82 + i * 62));
+    y += bh + 50 + extra;
+
+    let fs = 34, widths;
+    do { ctx.font = F(600, fs); widths = T.traits.map((t) => ctx.measureText(t).width + 52); fs -= 2; }
+    while (widths.reduce((a, b) => a + b, 0) + 20 * (widths.length - 1) > 960 && fs > 22);
+    let x = (W - (widths.reduce((a, b) => a + b, 0) + 20 * (widths.length - 1))) / 2;
+    T.traits.forEach((t, i) => {
+      roundRect(ctx, x, y, widths[i], 70, 35); ctx.fillStyle = T.chip; ctx.fill();
+      ctx.fillStyle = T.ink; ctx.fillText(t, x + widths[i] / 2, y + 47); x += widths[i] + 20;
+    });
+    y += 70 + 40 + extra;
+
+    if (T.menu) {
+      ctx.font = F(500, 34); const l1 = 'Cocok minum: ';
+      ctx.font = F(700, 40); const mwid = ctx.measureText(T.menu).width;
+      ctx.font = F(500, 34); const l1w = ctx.measureText(l1).width;
+      const pw = l1w + mwid + 150;
+      roundRect(ctx, (W - pw) / 2, y, pw, 92, 46); ctx.fillStyle = '#2B140C'; ctx.fill();
+      cup(ctx, (W - pw) / 2 + 58, y + 50, 52, 3);
+      ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillText(l1, (W - pw) / 2 + 100, y + 58);
+      ctx.font = F(700, 40); ctx.fillStyle = '#FFC66B'; ctx.fillText(T.menu, (W - pw) / 2 + 100 + l1w, y + 59);
+      ctx.textAlign = 'center';
+      y += 92 + 36 + extra;
+    }
+
+    const P = TYPES[T.partner];
+    ctx.font = F(500, 34); ctx.fillStyle = T.ink; ctx.globalAlpha = 0.9;
+    ctx.fillText(`Partner terbaikmu: ${P.name}`, W / 2, Math.min(y + 30, 1705)); ctx.globalAlpha = 1;
+
+    // footer
+    ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(0, 1760, W, 160);
+    ctx.textAlign = 'left'; ctx.font = F(700, 50); ctx.fillStyle = T.ink;
+    ctx.fillText('MONTY', 70, 1838); const mwd = ctx.measureText('MONTY').width;
+    ctx.fillStyle = T.ink === '#FFFFFF' ? '#FFD98A' : '#E2451B'; ctx.fillText('&Co.', 70 + mwd + 3, 1838);
+    ctx.textAlign = 'right'; ctx.fillStyle = T.ink; ctx.font = F(600, 32); ctx.fillText(CONFIG.instagramHandle, W - 70, 1826);
+    ctx.globalAlpha = 0.85; ctx.font = F(500, 26);
+    ctx.fillText('Kamu Monty yang mana? ' + (CONFIG.quizLabel || location.host || ''), W - 70, 1872); ctx.globalAlpha = 1;
+    return c;
+  }
+
+  let state = { type: null, file: null, url: null, canShare: false };
+
+  async function finish() {
+    show('thinking');
+    const type = score();
+    const [canvas] = await Promise.all([renderCard(type), new Promise((r) => setTimeout(r, 1500))]);
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.92));
+    if (state.url) URL.revokeObjectURL(state.url);
+    state = { type, url: URL.createObjectURL(blob), file: null, canShare: false };
+    state.file = new File([blob], `which-monty-${type}.jpg`, { type: 'image/jpeg', lastModified: Date.now() });
+    try { state.canShare = !!(navigator.canShare && navigator.canShare({ files: [state.file] })); } catch (_) {}
+    const T = TYPES[type];
+    $('cardImg').src = state.url;
+    $('cardImg').alt = `Hasil kuis: ${T.name}. ${T.tagline}`;
+    $('aboutTitle').textContent = T.name;
+    $('aboutText').textContent = T.text;
+    const menu = $('aboutMenu');
+    menu.hidden = !T.menu;
+    if (T.menu) menu.innerHTML = `Rekomendasi Monty buat kamu: <b></b>`, menu.lastChild.textContent = T.menu;
+    $('saveBtn').classList.remove('saved');
+    $('saveLabel').textContent = 'Simpan ke galeri';
+    const tip = $('rTip');
+    tip.hidden = !isIOS;
+    tip.textContent = state.canShare ? 'Di iPhone: tap Simpan, lalu pilih "Save Image".' : 'Tips: tekan lama gambarnya, lalu "Save to Photos".';
+    show('result');
+  }
+
+  function download() {
+    const a = document.createElement('a');
+    a.href = state.url; a.download = state.file.name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function markSaved(msg) {
+    $('saveBtn').classList.add('saved'); $('saveLabel').textContent = 'Tersimpan ✓';
+    toast(msg || `Tersimpan! Upload ke Story & tag ${CONFIG.instagramHandle} ✨`);
+  }
+
+  $('saveBtn').addEventListener('click', async () => {
+    if (!state.file) return;
+    if (state.canShare && isIOS) {
+      try { await navigator.share({ files: [state.file] }); markSaved(); }
+      catch (e) { if (!e || e.name !== 'AbortError') { download(); markSaved(); } }
+      return;
+    }
+    download(); markSaved();
+  });
+
+  $('challengeBtn').addEventListener('click', async () => {
+    const T = state.type ? TYPES[state.type] : null;
+    const url = location.href.split('#')[0].split('?')[0];
+    const text = T ? `Aku ${T.name}! ${T.tagline} Kamu Monty yang mana?` : 'Kamu Monty yang mana?';
+    try {
+      if (navigator.share) {
+        const data = { title: 'Which Monty Are You?', text, url };
+        if (!isIOS && state.canShare) data.files = [state.file];
+        await navigator.share(data);
+        return;
+      }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Link disalin! Kirim ke temanmu 💌'); }
+    catch (_) { toast(url); }
+  });
+
+  $('againBtn').addEventListener('click', () => { step = 0; answers = []; show('question'); renderQuestion(); });
+
+  let toastTimer = null;
+  function toast(msg) {
+    const el = $('toast'); el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  show('intro');
+})();
+</script>
+</body>
+</html>
